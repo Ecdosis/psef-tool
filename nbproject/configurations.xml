@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="80">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>include/archive.h</itemPath>
+      <itemPath>include/cJSON.h</itemPath>
+      <itemPath>include/config.h</itemPath>
+      <itemPath>include/hashmap.h</itemPath>
+      <itemPath>include/kv_array.h</itemPath>
+      <itemPath>include/memwatch.h</itemPath>
+      <itemPath>include/mmp.h</itemPath>
+      <itemPath>include/node.h</itemPath>
+      <itemPath>include/part.h</itemPath>
+      <itemPath>include/path.h</itemPath>
+      <itemPath>include/pathset.h</itemPath>
+      <itemPath>include/response.h</itemPath>
+      <itemPath>include/single_file.h</itemPath>
+      <itemPath>include/textbuf.h</itemPath>
+      <itemPath>include/url.h</itemPath>
+      <itemPath>include/utils.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>src/archive.c</itemPath>
+      <itemPath>src/cJSON.c</itemPath>
+      <itemPath>src/config.c</itemPath>
+      <itemPath>src/hashmap.c</itemPath>
+      <itemPath>src/kv_array.c</itemPath>
+      <itemPath>src/main.c</itemPath>
+      <itemPath>src/memwatch.c</itemPath>
+      <itemPath>src/mmp.c</itemPath>
+      <itemPath>src/part.c</itemPath>
+      <itemPath>src/pathset.c</itemPath>
+      <itemPath>src/response.c</itemPath>
+      <itemPath>src/single_file.c</itemPath>
+      <itemPath>src/textbuf.c</itemPath>
+      <itemPath>src/url.c</itemPath>
+      <itemPath>src/utils.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <incDir>
+            <pElem>include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>COMMANDLINE</Elem>
+            <Elem>MEMWATCH</Elem>
+            <Elem>MEMWATCH_STDIO</Elem>
+          </preprocessorList>
+        </cTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibStdlibItem>Mathematics</linkerLibStdlibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
