@@ -1,21 +1,19 @@
 mmpupload 1 22-8-2012 
 
-NAME 
+NAME:
 mmpupload - uploads a list of files and form fields
 
-SYNOPSIS 
+SYNOPSIS: 
 mmpupload <folder>
 
-DESCRIPTION
+DESCRIPTION:
 Uploads a list of files and form values pairs to a server using the mime 
 multipart format. It thus does what your browser does in uploading a set 
 of files and field values during a HTML form submission, but on the 
 commandline so it can be easily automated. 
 
-mmpupload 
-is much easier to use 
-than curl, and is insensitive to spaces, braces and brackets in file 
-paths.
+mmpupload is much easier to use than curl, and is insensitive to spaces, 
+braces and brackets in file paths.
 
 mmpuload scans the source folder for literal paths, docids and config files.
 
@@ -30,14 +28,15 @@ capuana/@config/stripper/play/italian/capuana.json
 
 will upload the file "capuana.json" to the database "config" with the docid "stripper/play/italian/tei.json".
 
-.SH CONFIG FILES
+CONFIG FILES
+
 In any part of the directory structure a JSON file ending in ".conf" can be placed. As the directory structure is navigated the config files are merged via a stack, that is config files in sibling branches are not merged, but child branches are merged with their parents. In this way the properties desired for various sections of the hierarchy can be specified as desired. 
 
 Currently recognised keys are:
 base_url:
 which specifies the bare url to upload to (but not the resource path).
 
-.B corform: 
+corform: 
 specifies a corform file (a CSS file wrapped in JSON) as the default format for files in this and child directories.
 
 stripper:
@@ -57,7 +56,7 @@ match the names and relative paths of the files minus their suffixes)
 and their long version names. For example, a file with a relative path 
 poem2/A88.xml has a short name of poem2/A88.
 
-DOCIDs 
+DOCIDs: 
 A folder name beginning with "+" forms the start of a docid for 
 enclosed folders until another folder starting with "%" is encountered. 
 e.g. the folder path:
@@ -79,7 +78,7 @@ Any further folders within the path
 "+italian/capuana/aristofanunculos/%Frammento 1" become groups within 
 the generated MVDs.
 
-MVDs An MVD folder is designated by a docid path as described above. 
+MVDs: An MVD folder is designated by a docid path as described above. 
 Three types of content are allowed, and are each turned into a pair of 
 corcode/cortex files stored at the same docid in two different databases 
 (cortex and corcode).
@@ -95,6 +94,6 @@ into cortex and corcodes, which are then merged at stored at the docid.
 "corcode" then the contents of these directories will be merged into 
 their respective cortex and corcode files.
 
-EXAMPLE
+EXAMPLE:
 mmpupload _harpur
 
