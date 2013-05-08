@@ -48,10 +48,12 @@ static long write_time = 0;
 #define MVD_PATH "/import/mvd/"
 #define TEXT_PATH "/import/text/"
 #define XML_PATH "/import/xml/"
+#define IMG_PATH "/import/img/"
 #define LITERAL_PATH "/upload/"
 #define VERSION_KEY "VERSION_"
+#define PATH_SEPARATOR '/'
 /*
- * Scan a website repository for uploading
+ * Scan a PDEF archive for uploading
  */
 static char line[MAXLINE];
 static int archive_scan_dir( char *docid, char *relpath, config *cf );
@@ -224,7 +226,8 @@ static int import_dir( char *docid, char *path, config *cf )
     int res = archive_scan_for_files( docid, path, &cf );
     pathset *ps = pathset_create( path, docid, mvd_name(file_name(path)), 
         PATHSET_UNSET );
-    if ( ps != NULL && res )
+    pathset *first_ps = ps;
+    while ( ps != NULL && res )
     {
         mmp *my_mmp = mmp_create();
         if ( my_mmp != NULL )
@@ -294,17 +297,25 @@ static int import_dir( char *docid, char *path, config *cf )
                     // decide which url to send to
                     int kind = pathset_kind( ps );
                     char *res_path = NULL;
-                    if ( kind == PATHSET_MVD )
-                        res_path = MVD_PATH;
-                    else if ( kind==PATHSET_TEXT )
-                        res_path = TEXT_PATH;
-                    else if ( kind==PATHSET_XML )
-                        res_path = XML_PATH;
-                    else
+                    switch ( kind )
                     {
-                        res = 0;
-                        fprintf(stderr,"archive: unknown pathset type %d\n",
-                            kind);
+                        case PATHSET_MVD:
+                            res_path = MVD_PATH;
+                            break;
+                        case PATHSET_TEXT:
+                            res_path = TEXT_PATH;
+                            break;
+                        case PATHSET_IMG:
+                            res_path = IMG_PATH;
+                            break;
+                        case PATHSET_XML:
+                            res_path = XML_PATH;
+                            break;
+                        default:
+                            res = 0;
+                            fprintf(stderr,
+                                "archive: unknown pathset type %d\n", kind);
+                            break;
                     }
                     if ( res )
                     {
@@ -314,10 +325,11 @@ static int import_dir( char *docid, char *path, config *cf )
             }
             mmp_dispose( my_mmp );
         }
-        pathset_dispose( ps );
+        ps = pathset_next( ps );
     }
-    if ( old_cf != cf && cf != NULL )
-        config_dispose( cf );
+    pathset_dispose( first_ps );
+    if ( old_cf != cf && old_cf != NULL )
+        config_dispose( old_cf );
     return res;
 }
 /**
@@ -325,7 +337,7 @@ static int import_dir( char *docid, char *path, config *cf )
  * @param parent the relative path to the parent dir
  * @param docid the docid accumulated so far
  * @param name the name of the directory
- * @param cf the config file we have defined so far
+ * @param cf the config we have found so far
  * @return 1 if it worked else 0
  */
 static int archive_process_dir( char *docid, char *parent, char *name, 
@@ -344,7 +356,6 @@ static int archive_process_dir( char *docid, char *parent, char *name,
                 if ( !archive_scan_dir(db,path,cf) )
                 {
                     free( db );
-                    free( path );
                     res = 0;
                 }
                 else
@@ -366,7 +377,6 @@ static int archive_process_dir( char *docid, char *parent, char *name,
                 if ( !archive_scan_dir(new_docid,path,cf) )
                 {
                     free( new_docid );
-                    free( path );
                     res = 0;
                 }
                 else
@@ -429,7 +439,7 @@ static int archive_process_dir( char *docid, char *parent, char *name,
  * Scan a folder for DIRS only
  * @param docid the docid accumulated so far
  * @param relpath the relative path to the parent directory
- * @param cf a config object or to NULL
+ * @param cf a config object, maybe NULL
  * @return 1 if it worked OK, else 0
  */
 int archive_scan_for_dirs( char *docid, char *relpath, config *cf )
@@ -461,7 +471,7 @@ int archive_scan_for_dirs( char *docid, char *relpath, config *cf )
  * own conf file
  * @param docid the docid accumulated so far
  * @param relpath the current path relative to the root directory
- * @param cf the config file or NULL if not yet created
+ * @param cf the config file, maybe NULL 
  * @return 1 if it worked, else 0
  */
 static int archive_scan_dir( char *docid, char *relpath, config *cf )
@@ -475,6 +485,58 @@ static int archive_scan_dir( char *docid, char *relpath, config *cf )
     return res;
 }
 /**
+ * Scan a directory for a config within a given sub-path
+ * @param path the path the user passed in
+ * @param cf VAR param: config to update
+ * @return 1 if we scanned OK or if there was nothing to do
+ */
+static int archive_scan_config( char *path, config **cf )
+{
+    config *old = *cf;
+    int res = 1;
+    char *sep = strchr( path, PATH_SEPARATOR );
+    while ( sep != NULL )
+    {
+        *sep = 0;
+        DIR *dirp = opendir(path);
+        if ( dirp != NULL )
+        {
+            struct dirent *dp = readdir(dirp);
+            while ( res && dp != NULL ) 
+            {
+                if ( dp->d_type==DT_REG && ends_with(dp->d_name,".conf") )
+                {
+                    int flen = strlen(path)+strlen(dp->d_name)+2;
+                    char *fname = calloc( 1, flen );
+                    if ( fname != NULL )
+                    {
+                        strcat( fname, path );
+                        fname[strlen(path)] = PATH_SEPARATOR;
+                        strcat( fname, dp->d_name );
+                        *cf = config_update( fname, *cf );
+                        if ( *cf == NULL )
+                            res = 0;
+                        else if ( old != NULL && old != *cf )
+                            config_dispose( old );
+                        old = *cf;
+                        free( fname );
+                    }
+                    else
+                    {
+                        fprintf(stderr,"failed to allocate file name\n");
+                        res = 0;
+                    }
+                }
+                dp = readdir(dirp);
+            } 
+            closedir( dirp );
+        }
+        *sep = PATH_SEPARATOR;
+        sep = strchr( sep+1, PATH_SEPARATOR );
+    }
+    return res;
+}
+/**
  * Scan a directory for archives. The only public function.
  * @param path the directory to look for archives or the archive folder itself
  * @return 1 if it worked, else 0
@@ -484,15 +546,23 @@ int archive_scan( char *path )
     char *name,*rel_path;
     rel_path = path;
     int res = split_path( &rel_path, &name );
+    config *cf=NULL;
     if ( res )
     {
-        // check for top-level literal, mvd folders etc
-        if ( is_mvd_name(name)||is_docid_name(name)||is_literal_name(name) )
-            res = archive_process_dir( "", rel_path, name, NULL );
-        else // just scan contents of path
-            res = archive_scan_dir( NULL, path, NULL );
+        // check if there are any configs higher up to scan
+        res = archive_scan_config( path, &cf );
+        if ( res )
+        {
+            // check for top-level mvd/text (%) docid (+) literal (@) folders
+            if ( is_mvd_name(name)||is_docid_name(name)||is_literal_name(name) )
+                res = archive_process_dir( "", rel_path, name, cf );
+            else // just scan contents of path
+                res = archive_scan_dir( NULL, path, cf );
+        }
         free( name );
         free( rel_path );
+        if ( cf != NULL )
+            config_dispose( cf );
     }
 #ifdef PROFILE
     fprintf(stderr,"read_time=%ld microseconds; write_time=%ld microseconds\n",

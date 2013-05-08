@@ -6,8 +6,8 @@
     h3.head {}
     h4.title {}
     div.lg { padding-bottom: 10px }
-    p.l { line-height: 110%; padding: 0px; margin: 0px }
-    p.final-line { text-indent: 20px; line-height: 110%; padding: 0px; margin: 0px }
+    p.l, p.final-line { line-height: 110%; padding: 0px; margin: 0px }
+    p.final-line { text-indent: 50px }
     p.note { font-style: italic }
     "
 }

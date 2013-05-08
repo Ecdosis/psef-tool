@@ -12,6 +12,7 @@
 #define PATHSET_CORTEX 3
 #define PATHSET_TEXT 4
 #define PATHSET_XML 5
+#define PATHSET_IMG 6
 #define PATHSET_UNSET 0
 #define PATHSET_LITERAL "literal"
 #ifdef	__cplusplus
@@ -26,6 +27,7 @@ char *pathset_get_docid( pathset *ps );
 char *pathset_name( pathset *ps );
 void pathset_dispose( pathset *ps );
 const char *pathset_compute_name( char *path );
+pathset *pathset_next( pathset *ps );
 
 #ifdef	__cplusplus
 }

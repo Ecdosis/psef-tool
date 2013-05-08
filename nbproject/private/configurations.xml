@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="80">
+<configurationDescriptor version="88">
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -30,8 +30,10 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" .</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" _capuana</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" _harpur</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" _capuana/@config</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" archive</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" _harpur</runcommand>
+        <runcommand>"${OUTPUT_PATH}" archive</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

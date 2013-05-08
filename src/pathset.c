@@ -32,10 +32,18 @@
 
 #define BLOCK_SIZE 12
 #define XML_SUFFIX ".xml"
+#define JPG_SUFFIX ".jpg"
+#define GIF_SUFFIX ".gif"
+#define PNG_SUFFIX ".png"
 #define CONF_SUFFIX ".conf"
 #define CRLEN strlen("\n")
-#define PATHSET_CORTEX_NAME "cortex"
-#define PATHSET_CORCODE_NAME "corcode"
+#define PDEF_CORTEX "cortex"
+#define PDEF_CORCODE "corcode"
+#define PDEF_TEXT "TEXT"
+#define PDEF_MVD "MVD"
+#define PDEF_XML "XML"
+#define PDEF_MIXED "MIXED"
+#define PDEF_CORTEX_FILE "cortex.mvd"
 /*
  * Represent a set of paths that make up a single MVD
  */
@@ -47,26 +55,8 @@ struct pathset_struct
     int kind;
     int allocated;
     int used;
-    pathset *children;
     pathset *next;
 };
-/**
- * Add a child to a pathset (a corcode or cortex)
- * @param ps the pathset to have children
- * @param child the child
- */
-void pathset_add_child( pathset *ps, pathset *child )
-{
-    if ( ps->children == NULL )
-        ps->children = child;
-    else 
-    {
-        pathset *temp = ps->children;
-        while ( temp->next != NULL )
-            temp = temp->next;
-        temp->next = child;
-    }
-}
 /**
  * Add a new path to a pathset
  * @param ps the pathset in question
@@ -120,6 +110,225 @@ void pathset_replace_docid( pathset *ps, char *rep )
     ps->docid = rep;
 }
 /**
+ * Create an empty new pathset. Don't copy existing paths
+ * @param old the old pathset to clone
+ * @return the new pathset or NULL
+ */
+pathset *pathset_clone( pathset *old )
+{
+    pathset *ps = calloc( 1, sizeof(pathset) );
+    if ( ps != NULL )
+    {
+        ps->paths = calloc( BLOCK_SIZE, sizeof(char*) );
+        ps->allocated = BLOCK_SIZE;
+        ps->used = 0;
+        ps->kind = old->kind;
+        ps->name = strdup(old->name);
+        if ( ps->docid != NULL )
+            ps->docid = strdup( old->docid );
+        if ( ps->paths == NULL || ps->docid==NULL )
+        {
+            pathset_dispose( ps );
+            ps = NULL;
+        }
+    }
+    return ps;
+}
+/**
+ * Add a new pathset on the end of the old
+ * @param head the head of the list
+ * @param ps the new pathset to append
+ */
+static void pathset_append( pathset *head, pathset *ps )
+{
+    pathset *next = head;
+    while ( next->next != NULL )
+        next = next->next;
+    next->next = ps;
+}
+/**
+ * Create a new pathset and add it to the old one
+ * @param ps the pathset to update
+ * @param kind the new kind of pathset
+ * @return the new pathset or NULL if it failed
+ */
+static pathset *pathset_update( pathset *ps, int kind )
+{
+    if ( ps->used == 0 || ps->kind == kind )
+        ps->kind = kind;
+    else 
+    {
+        pathset *old = ps;
+        ps = pathset_clone( ps );
+        if ( ps != NULL )
+            pathset_append( old, ps );
+        ps->kind = kind;
+    }
+    return ps;
+}
+/**
+ * Read a directory containing only MVD corcodes
+ * @param ps the pathset to record in or its parent
+ * @param path the path up to this directory
+ * @param dir the name of this directory
+ * @return 1 if it worked else 0
+ */
+static int pathset_mvd_corcode( pathset *ps, char *path, char *dir )
+{
+    int res = 1;
+    DIR *dp;
+    int first = 1;
+    char *new_path = allocate_path( path, PDEF_CORCODE );
+    if ( new_path != NULL )
+    {
+        dp = opendir( new_path );
+        if ( dp != NULL )
+        {
+            struct dirent *ep = readdir(dp);
+            while ( ep != NULL && res )
+            {
+                if ( !is_directory(new_path,ep->d_name) )
+                {
+                    if ( first )
+                    {
+                        ps = pathset_update( ps, PATHSET_CORCODE );
+                        if ( ps == NULL )
+                            res = 0;
+                        first = 0;
+                    }
+                    add_path( ps, new_path, ep->d_name );
+                }
+            }
+        }
+        else
+            fprintf(stderr,"pathset: failed to open %s\n",new_path);
+        free( new_path );
+    }
+    return res;
+}
+/**
+ * Process a directory containing only MVDs
+ * @param ps the pathset to add to
+ * @param path the path that led us here, plus "MVD"
+ * @return 1 if it worked else 0
+ */
+static int pathset_mvd( pathset *ps, char *path )
+{
+    int res = 1;
+    // augment path
+    char *new_path = allocate_path( path, PDEF_MVD );
+    if ( new_path != NULL )
+    {
+        DIR *dp;
+        dp = opendir( new_path );
+        if ( dp != NULL )
+        {
+            struct dirent *ep = readdir(dp);
+            while ( ep != NULL && res )
+            {
+                if ( is_directory(new_path,ep->d_name) )
+                {
+                    if ( strcmp(ep->d_name,PDEF_CORCODE)==0 )
+                        res = pathset_mvd_corcode( ps, new_path, 
+                            ep->d_name );
+                    else if ( strcmp(ep->d_name,"..")!=0
+                        && strcmp(ep->d_name,".")!=0 )
+                        fprintf(stderr,"pathset: unrecognised directory %s\n",
+                            ep->d_name );
+                }
+                else if ( strcmp(ep->d_name,PDEF_CORTEX_FILE)==0 )
+                {
+                    ps = pathset_update( ps, PATHSET_CORTEX );
+                    if ( ps != NULL )
+                        add_path( ps, new_path, "cortex.mvd" );
+                    else
+                        res = 0;
+                }
+                else
+                    fprintf(stderr,
+                        "pathset: unknown file %s ignored\n",ep->d_name);
+            }
+        }
+        else
+        {
+            fprintf(stderr,"pathset: couldn't open %s\n",new_path);
+            res = 0;
+        }
+        free( new_path );
+    }
+    return res;
+}
+/**
+ * Process a cortex directory within a TEXT directory
+ * @param ps the pathset to add it to
+ * @param path the path of the TEXT directory
+ * @return 1 if it worked else 0
+ */
+int pathset_text_cortex( pathset *ps, char *path )
+{
+    int res = 1;
+    char *new_path = allocate_path( path, PDEF_TEXT );
+    if ( new_path != NULL )
+    {
+        DIR *dp;
+        dp = opendir( new_path );
+        if ( dp != NULL )
+        {
+            struct dirent *ep = readdir(dp);
+            while ( ep != NULL && res )
+            {
+                if 
+            }
+        }
+    }
+    return res;
+}
+                    else if ( strcmp(ep->d_name,PDEF_CORCODE)==0 )
+                        res = pathset_text_corcode(ps,new_path);
+/**
+ * Process the TEXT directory inside 
+ */
+static int pathset_text( pathset *ps, char *path )
+{
+    int res = 1;
+    char *new_path = allocate_path( path, PDEF_TEXT );
+    if ( new_path != NULL )
+    {
+        DIR *dp;
+        dp = opendir( new_path );
+        if ( dp != NULL )
+        {
+            struct dirent *ep = readdir(dp);
+            while ( ep != NULL && res )
+            {
+                if ( is_directory(new_path,ep->d_name) )
+                {
+                    if ( strcmp(ep->d_name,PDEF_CORTEX)==0)
+                        res = pathset_text_cortex(ps,new_path);
+                    else if ( strcmp(ep->d_name,PDEF_CORCODE)==0 )
+                        res = pathset_text_corcode(ps,new_path);
+                    else
+                    {
+                        res = 0;
+                        fprintf(stderr,
+                            "pathset: ignoring unrecognised subdir %s\n",
+                            ep->d_name);
+                    }
+                }
+            }
+        }
+    }
+    return res;
+}
+static int pathset_xml( pathset *ps, char *path )
+{
+    return 0;
+}
+static int pathset_mixed( pathset *ps, char *path )
+{
+    return 0;
+}
+/**
  * Build the paths from the given directory
  * @param ps the pathset in question
  * @param path the relative path from CWD to the file or dir
@@ -129,10 +338,7 @@ static int build_paths( pathset *ps, char *path )
 {
     DIR *dp;
     int res = 1;
-    int has_corcode = 0;
-    int has_cortex = 0;
-    int nxmls=0;
-    int ntxts=0;
+    int nimgs=0;
     dp = opendir( path );
     if (dp != NULL)
     {
@@ -143,34 +349,14 @@ static int build_paths( pathset *ps, char *path )
             {
                 if ( is_directory(path,ep->d_name) )
                 {
-                    if ( strcmp(ep->d_name,PATHSET_CORTEX_NAME)==0 )
-                    {
-                        char *fullpath = allocate_path(path,ep->d_name);
-                        if ( fullpath != NULL )
-                        {
-                            pathset *child = pathset_create(fullpath,
-                                NULL, ps->name, PATHSET_CORTEX);
-                            pathset_add_child( ps, child );
-                            has_cortex = 1;
-                            free( fullpath );
-                        }
-                        else
-                            res = 0;
-                    }
-                    else if( strcmp(ep->d_name,PATHSET_CORCODE_NAME)==0 )
-                    {
-                        char *fullpath = allocate_path(path,ep->d_name);
-                        if ( fullpath != NULL )
-                        {
-                            pathset *child = pathset_create(fullpath,
-                                NULL, ps->name, PATHSET_CORCODE);
-                            pathset_add_child(ps, child);
-                            has_corcode = 1;
-                            free( fullpath );
-                        }
-                        else
-                            res = 0;
-                    }
+                    if ( strcmp(ep->d_name,PDEF_MVD)==0 )
+                        res = pathset_mvd(ps,path);
+                    else if( strcmp(ep->d_name,PDEF_TEXT)==0 )
+                        res = pathset_text(ps,path);
+                    else if ( strcmp(ep->d_name,PDEF_XML)==0 )
+                        res = pathset_xml(ps,path);
+                    else if ( strcmp(ep->d_name,PDEF_MIXED)==0 )
+                        res = pathset_mixed(ps,path);
                     else
                     {
                         res = 0;
@@ -181,11 +367,17 @@ static int build_paths( pathset *ps, char *path )
                 }
                 else if ( !ends_with(ep->d_name,CONF_SUFFIX) )
                 {
-                    if ( ends_with(ep->d_name,XML_SUFFIX))
-                        nxmls++;
+                    if ( ends_with(ep->d_name,PNG_SUFFIX)
+                        ||ends_with(ep->d_name,JPG_SUFFIX)
+                        ||ends_with(ep->d_name,GIF_SUFFIX))
+                    {
+                        nimgs++;
+                        res = add_path( ps, path, ep->d_name );
+                    }
                     else
-                        ntxts++;
-                    res = add_path( ps, path, ep->d_name );
+                        fprintf(stderr,
+                            "pathset: misplaced file %s ignored\n",
+                            ep->d_name);
                 }
             }
             ep = readdir( dp );
@@ -194,26 +386,27 @@ static int build_paths( pathset *ps, char *path )
         }
         closedir (dp);
     }
-    // set name
-    if ( ps->kind == PATHSET_UNSET )
-    {
-        if ( has_corcode && has_cortex )
-            ps->kind = PATHSET_MVD;
-        else if ( nxmls > ntxts )
-            ps->kind = PATHSET_XML;
-        else
-            ps->kind = PATHSET_TEXT;
-    }
+    if ( ps->kind == PATHSET_UNSET && nimgs > 0 )
+        ps->kind = PATHSET_IMG;
     return res;
 }
 /**
- * Get the knd of this set
+ * Get the kind of this set
  * @param ps the pathset
  * @return its kind as an int
  */
 int pathset_kind( pathset *ps )
 {
     return ps->kind;
+}
+/**
+ * Get the next pathset to upload
+ * @param ps the current pathset
+ * @return the next pathset
+ */
+pathset *pathset_next( pathset *ps )
+{
+    return ps->next;
 }
 /**
  * Create a pathset and discover all its paths
@@ -223,7 +416,7 @@ int pathset_kind( pathset *ps )
  * @param kind the kind of this pathset
  * @return a finished pathset
  */
-pathset *pathset_create( char *folder, char *docid, char *name,int kind )
+pathset *pathset_create( char *folder, char *docid, char *name, int kind )
 {
     pathset *ps = calloc( 1, sizeof(pathset) );
     if ( ps != NULL )
@@ -251,6 +444,8 @@ pathset *pathset_create( char *folder, char *docid, char *name,int kind )
             ps = NULL;
         }
     }
+    else
+        fprintf(stderr,"pathset:failed to create object\n");
     return ps;
 }
 /**
@@ -268,7 +463,7 @@ void pathset_dispose( pathset *ps )
         free( ps->docid );
     if ( ps->name != NULL )
         free( ps->name );
-    pathset *child = ps->children;
+    pathset *child = ps->next;
     while ( child != NULL )
     {
         // child->next will become invalid after disposal
@@ -279,8 +474,7 @@ void pathset_dispose( pathset *ps )
     free( ps );
 }
 /**
- * A pathset can be a set of XML files OR a set of single versions 
- * split into markup and text OR a set of plain text file versions
+ * Get the pathset's name
  * @param ps the pathset in question
  * @return the pathset name/kind
  */
@@ -295,19 +489,7 @@ char *pathset_name( pathset *ps )
  */
 int pathset_size( pathset *ps )
 {
-    if ( ps->children == NULL )
-        return ps->used;
-    else
-    {
-        int total = 0;
-        pathset *temp = ps->children;
-        while ( temp != NULL )
-        {
-            total += pathset_size( temp );
-            temp = temp->next;
-        }
-        return total;
-    }
+    return ps->used;
 }
 /**
  * Get a particular path from the set
@@ -317,27 +499,11 @@ int pathset_size( pathset *ps )
  */
 char *pathset_get_path( pathset *ps, int index )
 {
-    if ( ps->used > 0 )
-    {
-        if ( index < ps->used )
-            return ps->paths[index];
-        else
-            fprintf(stderr,"pathset: index too big: %d (max %d)\n",
-                index,ps->used);
-    }
-    else 
-    {
-        int start = 0;
-        pathset *temp = ps->children;
-        while ( temp != NULL )
-        {
-            if ( index < start+temp->used )
-                return temp->paths[index-start];
-            start += temp->used;
-            temp = temp->next;
-        }
-        fprintf(stderr,"pathset: index too big: %d (max %d)\n", index,start);
-    }
+    if ( index < ps->used )
+        return ps->paths[index];
+    else
+        fprintf(stderr,"pathset: index too big: %d (max %d)\n",
+            index,ps->used);
     return NULL;
 }
 /**
@@ -356,28 +522,15 @@ char *pathset_get_docid( pathset *ps )
  */
 static int pathset_measure( pathset *ps )
 {
-    int size;
+    int i,size;
     if ( ps->docid != NULL )
         // CR, NULL, ": "
         size = strlen(ps->name) + 3 + CRLEN + strlen(ps->docid);
     else
         // NULL
         size = 1;
-    if ( ps->children != NULL )
-    {
-        pathset *child = ps->children;
-        while ( child != NULL )
-        {
-            size += pathset_measure( child );
-            child = child->next;
-        }
-    }
-    else 
-    {
-        int i;
-        for ( i=0;i<ps->used;i++ )
-            size += CRLEN + strlen(ps->paths[i]);
-    }
+    for ( i=0;i<ps->used;i++ )
+        size += CRLEN + strlen(ps->paths[i]);
     return size;
 }
 /**
@@ -387,7 +540,7 @@ static int pathset_measure( pathset *ps )
  */
 static char *pathset_tostring( pathset *ps )
 {
-    int plen = pathset_measure( ps );
+    int i,plen = pathset_measure( ps );
     int slen = 0;
     char *str = calloc( 1, plen );
     if ( str != NULL )
@@ -397,31 +550,12 @@ static char *pathset_tostring( pathset *ps )
             snprintf( str, plen, "%s: %s\n",ps->name,ps->docid );
             slen = strlen(ps->name)+strlen(ps->docid)+3+CRLEN;
         }
-        if ( ps->children != NULL )
+        for ( i=0;i<ps->used;i++ )
         {
-            pathset *child = ps->children;
-            while ( child != NULL )
-            {
-                char *child_str = pathset_tostring( child );
-                if ( child_str != NULL )
-                {
-                    strncat( str, child_str, plen-slen );
-                    slen += strlen( child_str );
-                    free( child_str );
-                }
-                child = child->next;
-            }
-        }
-        else
-        {
-            int i;
-            for ( i=0;i<ps->used;i++ )
-            {
-                strncat( str, ps->paths[i], plen-slen );
-                slen += strlen( ps->paths[i] );
-                strncat( str, "\n", plen-slen );
-                slen += CRLEN;
-            }
+            strncat( str, ps->paths[i], plen-slen );
+            slen += strlen( ps->paths[i] );
+            strncat( str, "\n", plen-slen );
+            slen += CRLEN;
         }
     }
     return str;
