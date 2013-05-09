@@ -109,6 +109,38 @@ void *config_dispose( config *cf )
     }
     return NULL;
 }
+void config_print( config *cf )
+{
+    printf("{");
+    while ( cf != NULL )
+    {
+        if ( cf->key != NULL )
+            printf( "%s: ", cf->key );
+        if ( cf->value != NULL )
+        {
+            if ( cf->kind == STRING_KIND )
+                printf( "%s",(char*)cf->value );
+            else if ( cf->kind == ARRAY_KIND )
+            {
+                int i = 0;
+                printf("[");
+                char **tmp = (char**)cf->value;
+                while ( tmp[i] != NULL )
+                {
+                    printf("%s: %s",tmp[i],tmp[i+1]);
+                    if ( tmp[i+2] != NULL )
+                        printf(", ");
+                    i += 2;
+                }
+                printf("]");
+            }
+        }
+        if ( cf->next != NULL )
+            printf(", ");
+        cf = cf->next;
+    }
+    printf("}");
+}
 /**
  * Add a key-value entry to the config list
  * @param cf the config head of list

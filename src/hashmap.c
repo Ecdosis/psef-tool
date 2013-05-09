@@ -26,9 +26,7 @@
 #define INITIAL_BUCKETS 12
 #define MOD_ADLER 65521
 #define MAX_RATIO 0.8f
-/*
- * General hashmap implementation
- */
+
 struct hashmap_struct
 {
 	struct bucket **buckets;
@@ -66,11 +64,11 @@ hashmap *hashmap_create()
 		{
 			free( map );
 			map = NULL;
-			fprintf(stderr,"hashmap: failed to allocate hashmap\n");
+			fprintf(stderr,"failed to allocate hashmap\n");
 		}
 	}
 	else
-		fprintf(stderr,"hashmap: couldn't allocate hashmap\n");
+		fprintf(stderr,"couldn't allocate hashmap\n");
 	return map;
 }
 /**
@@ -137,7 +135,8 @@ static struct bucket *bucket_create( char *key, void *value )
         b->key = strdup(key);
         if ( b->key == NULL )
         {
-            fprintf(stderr,"hashmap: failed to allocate store for hashmap key\n");
+            fprintf(stderr,"failed to allocate store for hashmap key\n");
+            bucket_dispose( b );
             return NULL;
         }
         b->value = value;
@@ -169,7 +168,9 @@ static int hashmap_rehash( hashmap *map )
                 unsigned slot = hash((unsigned char*)b->key,
                     strlen(b->key))%new_size;
                 struct bucket *d = bucket_create(b->key,b->value);
-                if ( new_buckets[slot] == NULL )
+                if ( d==NULL )
+                    return 0;
+                else if ( new_buckets[slot] == NULL )
                     new_buckets[slot] = d;
                 else
                 {
@@ -225,7 +226,7 @@ int hashmap_contains( hashmap *map, char *key )
 	while ( b != NULL )
 	{
 		// if key already present, just return
-		if ( strcmp(key,b->key)==0 )
+        if ( strcmp(key,b->key)==0 )
 			return 1;
 		else
 			b = b->next;
@@ -271,6 +272,7 @@ int hashmap_put( hashmap *map, char *key, void *value )
             {
                 if ( strcmp(c->key,key)==0 )
                 {
+                    // key already present: replace
                     if ( prev != NULL )
                         prev->next = d;
                     else
@@ -303,6 +305,25 @@ int hashmap_put( hashmap *map, char *key, void *value )
 int hashmap_size( hashmap *map )
 {
 	return map->num_keys;
+}
+/**
+ * Store the hashmap keys in an array
+ * @param hm the hashmap in question
+ * @param keys the array of keys to store it in
+ */
+void hashmap_to_array( hashmap *hm, char **keys )
+{
+    int i,j;
+    for ( i=0,j=0;i<hm->num_buckets;i++ )
+    {
+        struct bucket *b = hm->buckets[i];
+        while ( b != NULL )
+        {
+            if ( b->key != NULL )
+                keys[j++] = b->key;
+            b = b->next;
+        }
+    }
 }
 /**
  * Create an iterator

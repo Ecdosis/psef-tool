@@ -1,9 +1,3 @@
-/*
- * hashmap.h
- *
- *  Created on: 01/11/2010
- *  (c) Desmond Schmidt 2010
- */
 /* This file is part of formatter.
  *
  *  formatter is free software: you can redistribute it and/or modify
@@ -34,6 +28,7 @@ void *hashmap_get( hashmap *map, char *key );
 int hashmap_size( hashmap *map );
 void hashmap_print( hashmap *map, print_value pv );
 int hashmap_remove( hashmap *map, char *key );
+void hashmap_to_array( hashmap *hm, char **keys );
 // iterator methods
 typedef struct hashmap_iterator_struct hashmap_iterator;
 hashmap_iterator *hashmap_iterator_create( hashmap *map );
