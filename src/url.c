@@ -118,6 +118,7 @@ static int url_port( url *u, const char **spec )
     char *pos = strstr( *spec, ":" );
     if ( pos != NULL )
     {
+        u->port = 0;
         pos++;
         while( *pos != 0 && isdigit(*pos) )
         {

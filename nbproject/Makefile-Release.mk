@@ -35,19 +35,20 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/src/archive.o \
 	${OBJECTDIR}/src/cJSON.o \
 	${OBJECTDIR}/src/config.o \
+	${OBJECTDIR}/src/download.o \
 	${OBJECTDIR}/src/hashmap.o \
+	${OBJECTDIR}/src/item.o \
 	${OBJECTDIR}/src/kv_array.o \
 	${OBJECTDIR}/src/main.o \
 	${OBJECTDIR}/src/memwatch.o \
 	${OBJECTDIR}/src/mmp.o \
 	${OBJECTDIR}/src/part.o \
-	${OBJECTDIR}/src/pathset.o \
+	${OBJECTDIR}/src/path.o \
 	${OBJECTDIR}/src/response.o \
-	${OBJECTDIR}/src/single_file.o \
 	${OBJECTDIR}/src/textbuf.o \
+	${OBJECTDIR}/src/upload.o \
 	${OBJECTDIR}/src/url.o \
 	${OBJECTDIR}/src/utils.o
 
@@ -70,16 +71,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hrit.mmpupload
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/pdef-tool
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hrit.mmpupload: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/pdef-tool: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hrit.mmpupload ${OBJECTFILES} ${LDLIBSOPTIONS}
-
-${OBJECTDIR}/src/archive.o: src/archive.c 
-	${MKDIR} -p ${OBJECTDIR}/src
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/archive.o src/archive.c
+	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/pdef-tool ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/src/cJSON.o: src/cJSON.c 
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -91,10 +87,20 @@ ${OBJECTDIR}/src/config.o: src/config.c
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/config.o src/config.c
 
+${OBJECTDIR}/src/download.o: src/download.c 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/download.o src/download.c
+
 ${OBJECTDIR}/src/hashmap.o: src/hashmap.c 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/hashmap.o src/hashmap.c
+
+${OBJECTDIR}/src/item.o: src/item.c 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/item.o src/item.c
 
 ${OBJECTDIR}/src/kv_array.o: src/kv_array.c 
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -121,25 +127,25 @@ ${OBJECTDIR}/src/part.o: src/part.c
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/part.o src/part.c
 
-${OBJECTDIR}/src/pathset.o: src/pathset.c 
+${OBJECTDIR}/src/path.o: src/path.c 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/pathset.o src/pathset.c
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/path.o src/path.c
 
 ${OBJECTDIR}/src/response.o: src/response.c 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/response.o src/response.c
 
-${OBJECTDIR}/src/single_file.o: src/single_file.c 
-	${MKDIR} -p ${OBJECTDIR}/src
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/single_file.o src/single_file.c
-
 ${OBJECTDIR}/src/textbuf.o: src/textbuf.c 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/textbuf.o src/textbuf.c
+
+${OBJECTDIR}/src/upload.o: src/upload.c 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/upload.o src/upload.c
 
 ${OBJECTDIR}/src/url.o: src/url.c 
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -157,7 +163,7 @@ ${OBJECTDIR}/src/utils.o: src/utils.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hrit.mmpupload
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/pdef-tool
 
 # Subprojects
 .clean-subprojects:

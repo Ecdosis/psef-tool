@@ -25,12 +25,10 @@
       <runprofile version="9">
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" test/pathset/test</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" testdata/pathset/test</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" .</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" _capuana</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" _harpur</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" _capuana/@config</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h localhost</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d english/shakespeare.*</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" archive</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>"${OUTPUT_PATH}" archive</runcommand>

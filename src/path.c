@@ -3,8 +3,8 @@
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
-#include "path.h"
 #include "hashmap.h"
+#include "path.h"
 #include "config.h"
 #include "item.h"
 #ifdef MEMWATCH
@@ -16,8 +16,6 @@ struct path_struct
     char *path;
     struct path_struct *next;
 };
-path *head = NULL;
-path *tail = NULL;
 int res = 1;
 path *path_create( char *fname )
 {
@@ -41,7 +39,7 @@ void path_dispose( path *p )
         free( p->path );
     free( p );
 }
-void path_dispose_all( path *h )
+path *path_dispose_all( path *h )
 {
     path *p = h;
     while ( p != NULL )
@@ -50,6 +48,25 @@ void path_dispose_all( path *h )
         path_dispose( p );
         p = next;
     }
+    return NULL;
+}
+/**
+ * Derive the path name 
+ */
+void path_name( path *p, char *name, int limit )
+{
+    char *dup = strdup( p->path );
+    char *token = strtok( dup, "/" );
+    char *last = token;
+    while ( token != NULL )
+    {
+        last = token;
+        token = strtok( NULL, "/" );
+    }
+    if ( last != NULL )
+        strncpy( name, last, limit );
+    else
+        strncpy( name, p->path, limit );
 }
 char *path_get( path *p )
 {
@@ -101,7 +118,13 @@ static char *path_extend( char *p, char *ext, int dispose_old )
     }
     return new_path;
 }
-int path_scan( char *dir )
+/**
+ * Scan a directory for files. Don't do anything with them yet.
+ * @param dir the directory to scan
+ * @param head set to the head of a list of file-paths
+ * @param tail set to the current path tail
+ */
+int path_scan( char *dir, path **head, path **tail )
 {
     int res = 1;
     DIR *dp;
@@ -118,7 +141,7 @@ int path_scan( char *dir )
                     char *new_path = path_extend( dir, ep->d_name, 0 );
                     if ( new_path != NULL )
                     {
-                        res = path_scan( new_path );
+                        res = path_scan( new_path, head, tail );
                         free( new_path );
                     }
                     else
@@ -135,12 +158,12 @@ int path_scan( char *dir )
                             fp->path = strdup( new_path );
                             if ( fp->path != NULL )
                             {
-                                if ( head == NULL )
-                                    head = tail = fp;
+                                if ( *head == NULL )
+                                    *head = *tail = fp;
                                 else
                                 {
-                                    tail->next = fp;
-                                    tail = fp;
+                                    (*tail)->next = fp;
+                                    *tail = fp;
                                 }
                             }
                             else
@@ -168,7 +191,7 @@ void path_append( path *fp, char *p )
     temp = temp->next;
     temp->path = strdup(p);
 }
-static void print_paths()
+static void print_paths( path *head )
 {
     path *fp = head;
     while ( fp != NULL )
@@ -276,7 +299,7 @@ static void path_parse( path *fp, hashmap *hm )
                         type = MVD_CORTEX;
                     else if ( strcmp(token,"corcode")==0 )
                         state = 8;
-                    else
+                    else if ( !path_ends(token,".conf") )
                     {
                         fprintf(stderr,"path:unexpected path %s/%s\n",
                             current,token);
@@ -291,7 +314,7 @@ static void path_parse( path *fp, hashmap *hm )
                         state = 10;
                         type = TEXT_CORTEX;
                     }
-                    else
+                    else if ( !path_ends(token,".conf") )
                     {
                         fprintf(stderr,"path:unexpected path %s/%s\n",
                             current,token);
@@ -375,6 +398,10 @@ static void path_parse( path *fp, hashmap *hm )
     else
         fprintf(stderr,"path:failed to duplicate path\n");
 }
+/**
+ * Print out the item map for debugging purposes
+ * @param hm the hashmap to print
+ */
 static void path_print_map( hashmap *hm )
 {
     char **keys = calloc( hashmap_size(hm), sizeof(char*) );
@@ -390,7 +417,12 @@ static void path_print_map( hashmap *hm )
         free( keys );
     }
 }
-static hashmap *path_process()
+/**
+ * Process the paths by grouping them into items
+ * @param head the first path in the list
+ * @return a map of docids to items
+ */
+hashmap *path_process( path *head )
 {
     path *p = head;
     hashmap *hm = hashmap_create();
@@ -401,6 +433,12 @@ static hashmap *path_process()
     }
     return hm;
 }
+/**
+ * Apply a config file to all subordinate items
+ * @param hm the map of docid-based keys to items
+ * @param p the path-prefix to look for
+ * @param fname the file path of the config file
+ */
 static void path_apply_conf( hashmap *hm, char *p, char *fname )
 {
     int i,size = hashmap_size( hm );
@@ -411,7 +449,14 @@ static void path_apply_conf( hashmap *hm, char *p, char *fname )
         for ( i=0;i<size;i++ )
         {
             item *it = hashmap_get(hm,keys[i]);
-            if ( item_path_starts(it,p) )
+            if ( item_path_unique(it,p,fname) )
+            {
+                config *cf = item_config( it );
+                cf = config_update( fname, cf );
+                item_set_config( it, cf );
+                break;
+            }
+            else if ( item_path_starts(it,p,fname) )
             {
                 config *cf = item_config( it );
                 cf = config_update( fname, cf );
@@ -421,13 +466,19 @@ static void path_apply_conf( hashmap *hm, char *p, char *fname )
         free( keys );
     }
 }
-static void path_find_config( hashmap *hm )
+/**
+ * Find files ending in ".conf"
+ * @param head the head of the list
+ * @param hm map of docid-based keys to items (sets of paths of the same type)
+ */
+void path_find_config( path *head, hashmap *hm )
 {
     path *p = head;
     while ( p != NULL )
     {
         char *token = strtok( p->path, "/" );
         char *current = NULL;
+        
         while ( token != NULL )
         {
             if ( path_ends(token,".conf") )
@@ -449,35 +500,5 @@ static void path_find_config( hashmap *hm )
         if ( current != NULL )
             free( current );
         p = path_next( p );
-    }
-}
-static void item_map_dispose( hashmap *hm )
-{
-    int i,size = hashmap_size( hm );
-    char **array = calloc( size, sizeof(char*) );
-    if ( array != NULL )
-    {
-        hashmap_to_array( hm, array );
-        for ( i=0;i<size;i++ )
-        {
-            item *it = hashmap_get( hm, array[i] );
-            item_dispose( it );
-        }
-        free( array );
-    }
-    hashmap_dispose( hm );
-}
-int main( int argc, char **argv )
-{
-    if ( argc == 2 )
-    {
-        char *dir = strdup(argv[1]);
-        path_scan( dir );
-        free( dir );
-        hashmap *hm = path_process();
-        path_find_config( hm );
-        path_print_map( hm );
-        item_map_dispose( hm );
-        path_dispose_all( head );
     }
 }

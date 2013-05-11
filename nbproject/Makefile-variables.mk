@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-MacOSX
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-MacOSX
-CND_ARTIFACT_NAME_Debug=hrit.mmpupload
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-MacOSX/hrit.mmpupload
+CND_ARTIFACT_NAME_Debug=pdef-tool
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-MacOSX/pdef-tool
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-MacOSX/package
-CND_PACKAGE_NAME_Debug=hrit.mmpupload.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-MacOSX/package/hrit.mmpupload.tar
+CND_PACKAGE_NAME_Debug=pdef-tool.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-MacOSX/package/pdef-tool.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-MacOSX
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-MacOSX
-CND_ARTIFACT_NAME_Release=hrit.mmpupload
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-MacOSX/hrit.mmpupload
+CND_ARTIFACT_NAME_Release=pdef-tool
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-MacOSX/pdef-tool
 CND_PACKAGE_DIR_Release=dist/Release/GNU-MacOSX/package
-CND_PACKAGE_NAME_Release=hrit.mmpupload.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-MacOSX/package/hrit.mmpupload.tar
+CND_PACKAGE_NAME_Release=pdef-tool.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-MacOSX/package/pdef-tool.tar
 #
 # include compiler specific variables
 #

@@ -14,8 +14,6 @@ extern "C" {
 int download( char *host, char **formats, char *docid, char *name, 
         char *zip_type );
 
-
-
 #ifdef	__cplusplus
 }
 #endif

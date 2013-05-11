@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=hrit.mmpupload
+PROJECTNAME=pdef-tool
 
 # Active Configuration
 DEFAULTCONF=Debug
