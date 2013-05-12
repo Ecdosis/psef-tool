@@ -256,6 +256,7 @@ static void path_parse( path *fp, hashmap *hm )
                         else if ( token[0] == '@' )
                         {
                             db = strdup( &token[1] );
+                            type = LITERAL;
                             state = 2;
                         }
                         else if ( state == '%' )

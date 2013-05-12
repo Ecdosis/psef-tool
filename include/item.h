@@ -19,6 +19,7 @@ char *item_docid( item *it );
 char *item_versionID( item *it );
 int item_num_paths( item *it );
 void item_print( item *it );
+char *item_db( item *it );
 void item_set_config( item *it, config *cf );
 void item_set_versionID( item *it, char *versionID );
 int item_path_starts( item *it, char *p, char *fname );

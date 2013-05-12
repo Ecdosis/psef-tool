@@ -123,6 +123,10 @@ char *item_docid( item *it )
 {
     return it->docid;
 }
+char *item_db( item *it )
+{
+    return it->db;
+}
 void item_add_path( item *it, char *p )
 {
     if ( it->paths == NULL )

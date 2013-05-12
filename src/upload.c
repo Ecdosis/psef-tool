@@ -378,7 +378,8 @@ int get_full_url( item *it, config *cf, char *url, int limit )
         {
             if ( ends_with(base_url,"/") )
                 res_path++;
-            snprintf( url, limit, "%s%s",base_url, res_path );
+            char *db = (kind==LITERAL)?item_db(it):"";
+            snprintf( url, limit, "%s%s%s",base_url, res_path, db );
         }
     }
     else
