@@ -30,8 +30,10 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" archive</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d english/shakespeare.*</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d .*</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d ".*"</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d english/shakespeare.*</runcommand>
+        <runcommand>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d ".*"</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

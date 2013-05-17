@@ -72,11 +72,27 @@ static int starts_with( char *str, char c )
 static int check_args( int argc, char **argv )
 {
     int i,sane = argc>1;
+    int prev_dot = 0;
     if ( sane )
     {
         for ( i=1;i<argc;i++ )
         {
-            if ( strlen(argv[i])>1 && argv[i][0]=='-' )
+            int arglen = strlen(argv[i]);
+            // user may have typed ".*"
+            if ( arglen>0 && argv[i][0]=='.' )
+            {
+                if ( prev_dot )
+                {
+                    fprintf(stderr,"Warning: use double-quotes around .* "
+                        "(shell expansion)\n");
+                    exit(0);
+                    sane = 0;
+                    break;
+                }
+                else
+                    prev_dot = 1;
+            }
+            else if ( arglen>1 && argv[i][0]=='-' )
             {
                 switch ( argv[i][1] )
                 {
@@ -113,17 +129,20 @@ static int check_args( int argc, char **argv )
                 }
             }
         }
-        // decide if we are downloading or uploading
-        if ( argc>=2 && !starts_with(argv[argc-1],'-') 
-            && !starts_with(argv[argc-2],'-') )
-        {
-            folder = argv[argc-1];
-        }
-        else if ( formats == NULL )
-        {
-            formats = calloc( 2, sizeof(char*));
-            if ( formats != NULL )
-                formats[0] = "MVD";
+        if ( sane )
+        {  
+            // decide if we are downloading or uploading
+            if ( argc>=2 && !starts_with(argv[argc-1],'-') 
+                && !starts_with(argv[argc-2],'-') )
+            {
+                folder = argv[argc-1];
+            }
+            else if ( formats == NULL )
+            {
+                formats = calloc( 2, sizeof(char*));
+                if ( formats != NULL )
+                    formats[0] = "MVD";
+            }
         }
     }
     return sane;
@@ -139,7 +158,7 @@ static void usage()
     "Download parameters:\n"
     "  host: url for download (defaults to http://localhost:8080/)\n"
     "  formats: a comma-separated list of TEXT,XML,MVD,MIXED (defaults to MVD)\n"
-    "  docid: wildcard prefix docid, e.g. english/poetry.* (defaults to .*)\n"
+    "  docid: wildcard prefix docid, e.g. english/poetry.* (defaults to \".*\")\n"
     "  name: name of archive to download (defaults to archive)\n"
     "  zip-type: type of zip archive, either tar_gz or zip (defaults to tar_gz)\n\n"
     "Upload parameter:\n"
