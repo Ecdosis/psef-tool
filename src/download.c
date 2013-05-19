@@ -282,6 +282,7 @@ int download( char *url, char **formats, char *docid, char *name,
                         snprintf( dst_name, 128, "%s.%s", name, suffix );
                         FILE *dst = fopen( dst_name, "w" );
                         int nbytes = readn( sock, dst );
+                        printf("nbytes=%d\n",nbytes);
                         fclose( dst );
                     }
                 }
