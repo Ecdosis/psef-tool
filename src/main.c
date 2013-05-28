@@ -25,6 +25,8 @@ static char *zip_type = "TAR_GZ";
 static char *host = "http://localhost:8080/";
 /** the folder to upload */
 static char *folder = NULL;
+/** if set to 1 add required configs and corforms */
+int add_required = 0;
 /**
  * Read the comma-separated list of formats
  * @param fmts a list of TEXT,MVD,XML,MIXED
@@ -123,6 +125,9 @@ static int check_args( int argc, char **argv )
                                 sane = 0;
                         }
                         break;
+                    case 'r':
+                        add_required = 1;
+                        break;
                     default:
                         sane = 0;
                         break;
@@ -154,13 +159,14 @@ static void usage()
 {
     printf( 
     "\npdef-tool [-h host] [-f formats] [-d docid] [-n name] "
-    "[-z zip-type] [folder]\n\n"
+    "[-z zip-type] [-r] [folder]\n\n"
     "Download parameters:\n"
     "  host: url for download (defaults to http://localhost:8080/)\n"
     "  formats: a comma-separated list of TEXT,XML,MVD,MIXED (defaults to MVD)\n"
     "  docid: wildcard prefix docid, e.g. english/poetry.* (defaults to \".*\")\n"
     "  name: name of archive to download (defaults to archive)\n"
-    "  zip-type: type of zip archive, either tar_gz or zip (defaults to tar_gz)\n\n"
+    "  zip-type: type of zip archive, either tar_gz or zip (defaults to tar_gz)\n"
+    "  -r: download required corforms and all configs on server\n\n"
     "Upload parameter:\n"
     "  folder: relative path to folder for uploading\n\n"
     );
@@ -174,7 +180,7 @@ int main( int argc, char** argv )
     {
         int res = 1;
         if ( folder == NULL )
-            res = download( host, formats, docid, name, zip_type );
+            res = download( host, formats, docid, name, zip_type, add_required );
         else
             res = upload( folder );
     }

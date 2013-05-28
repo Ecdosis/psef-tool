@@ -232,10 +232,11 @@ static void url_escape( char *str, int limit )
  * @param docid a wildcard-terminated prefix for the documents to download
  * @param name the name of the downloaded archive
  * @param zip_type the type of zip, either zip or tar_gz
+ * @param add_required if 1 then add required corforms and configs
  * @return 1 if it worked else 0
  */
 int download( char *url, char **formats, char *docid, char *name, 
-    char *zip_type )
+    char *zip_type, int add_required )
 {
     int sock = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
     if ( sock >= 0 )
@@ -260,10 +261,12 @@ int download( char *url, char **formats, char *docid, char *name,
                 {
                     char params[128];
                     char forms[128];
+                    char *add_reqd_str = (add_required)?"true":"false";
                     print_formats( formats, forms, 128 );
                     // add params
-                    snprintf(params,128,"DOC_ID=%s&NAME=%s&zip_type=%s&%s",
-                        docid,name,zip_type,forms);
+                    snprintf(params,128,
+                        "DOC_ID=%s&add_required=%s&NAME=%s&zip_type=%s&%s",
+                        docid,add_reqd_str,name,zip_type,forms);
                     url_escape( params, 128 );
                     if ( port != 80 )
                     {

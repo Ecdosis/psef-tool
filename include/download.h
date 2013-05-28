@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 int download( char *host, char **formats, char *docid, char *name, 
-        char *zip_type );
+        char *zip_type, int add_required );
 
 #ifdef	__cplusplus
 }
