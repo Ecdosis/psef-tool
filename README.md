@@ -2,33 +2,33 @@ pdef‐tool(1)                                                      pdef‐tool(
 
 
 
-NNAAMMEE
+NAME
        pdef‐tool ‐ uploads or downloads a digital scholarly edition
 
 
-SSYYNNOOPPSSIISS
-       UUppllooaaddiinngg:: pdef‐tool <source‐folder>
+SYNOPSIS
+       Uploading: pdef‐tool <source‐folder>
 
-       DDoowwnnllooaaddiinngg::
+       Downloading:
 
-       ‐‐hh <<hhoosstt>> the url for download (defaults to http://localhost:8080/)
+       ‐h <host> the url for download (defaults to http://localhost:8080/)
 
-       ‐‐ff  <<ffoorrmmaattss>> a comma‐separated list of TEXT,XML,MVD,MIXED (defaults to
+       ‐f <formats> a comma‐separated list of TEXT,XML,MVD,MIXED (defaults to
        MVD)
 
-       ‐‐dd <<ddoocciidd>> the  prefix  of  a  docid  as  a  regular  expression,  e.g.
+       ‐‐d <docid> the  prefix  of  a  docid  as  a  regular  expression,  e.g.
        english/poetry.* (defaults to ".*")
 
-       ‐‐nn <<nnaammee>> the name of the archive to download (defaults to archive)
+       ‐n <name> the name of the archive to download (defaults to archive)
 
-       ‐‐zz  <<zziipp‐‐ttyyppee>>  specifies the type of zip archive, either tar_gz or zip
+       ‐z  <zip-type>  specifies the type of zip archive, either tar_gz or zip
        (defaults to tar_gz)
 
-       ‐‐rr download required corforms and all configs on server
+       ‐r download required corforms and all configs on server
 
 
-DDEESSCCRRIIPPTTIIOONN
-       ppddeeff‐‐ttooooll is used to upload  or  download  digital  scholarly  editions
+DESCRIPTION
+       pdef‐tool is used to upload  or  download  digital  scholarly  editions
        using  the  PDEF (portable digital edition format). A PDEF archive is a
        specially formatted collection of nested folders and files.
 
@@ -36,13 +36,13 @@ DDEESSCCRRIIPPTTIIOONN
        docids of the data on the server. Paths may be literal or relative.
 
 
-CCOONNFFIIGG ffiilleess
+CONFIG files
        Config  files,  ending  in  ".conf" are JSON files containing key‐value
        pairs as described below. A config file’s values apply to the directory
        in which it occurs and also to any subordinate folders.
 
 
-LLIITTEERRAALL PPAATTHHSS
+LITERAL PATHS
        A folder name beginning with ’@’ designates a literal path. The folder‐
        name minus the ’@’ designates the database collection to which the con‐
        tained  files  will be uploaded. The remaining folders and files nested
@@ -56,7 +56,7 @@ LLIITTEERRAALL PPAATTHHSS
        useful for specifying images, configs and corforms.
 
 
-RREELLAATTIIVVEE PPAATTHHSS
+RELATIVE PATHS
        These begin with "+" and end with "%", so the directory path:
 
        archive/+english/shakespeare/kinglear/act1/%scene1/
@@ -68,7 +68,7 @@ RREELLAATTIIVVEE PPAATTHHSS
        "TEXT", "XML" or "MIXED". Their formats are as follows:
 
 
-MMVVDD ffoollddeerrss
+MVD folders
        An MVD folder contains one cortex.mvd file containing all the text ver‐
        sions at that docid. It also must contain a folder "corcode" containing
        all  the corcodes of that cortex, for example the file "default" in the
@@ -80,22 +80,22 @@ MMVVDD ffoollddeerrss
        about  the  document. The following keys are recognised for cortexs and
        corcodes:
 
-       aauutthhoorr:: The author’s name
+       author: The author’s name
 
-       ttiittllee:: The title of the work
+       title: The title of the work
 
-       ssttyyllee:: the docid of the desired corform
+       style: the docid of the desired corform
 
-       ffoorrmmaatt:: One of "TEXT" (cortexs) or "STIL" (corcodes)
+       format: One of "TEXT" (cortexs) or "STIL" (corcodes)
 
-       sseeccttiioonn:: The section of the document this MVD refers to  e.g.  "Act  1,
+       section: The section of the document this MVD refers to  e.g.  "Act  1,
        scene 1"
 
-       vveerrssiioonn11:: The short ID of the first version to display by default, e.g.
+       version1: The short ID of the first version to display by default, e.g.
        "/Base/F1". (Version IDs always start with a slash, docids do not)
 
 
-TTEEXXTT ffoollddeerrss
+TEXT folders
        These contain files whose names will be used to compose the  short‐ver‐
        sion  names. If there are subordinate folders with a TEXT folder, these
        are used to specify group‐names. A versions.conf file may  be  used  to
@@ -106,32 +106,32 @@ TTEEXXTT ffoollddeerrss
        the file‐names.
 
 
-XXMMLL ffoollddeerrss
+XML folders
        May  be specified as per TEXT folders, but extra config keys are recog‐
        nised to facilitate import. In addition  to  the  versions  key,  other
        recognised keys are:
 
-       ccoorrffoorrmm::  specifies  the docid of a corform file (a CSS file wrapped in
+       corform:  specifies  the docid of a corform file (a CSS file wrapped in
        JSON) as the default format for files in this and child directories.
 
-       ssttrriippppeerr:: specifies the docid of  a  stripper  config  file  to  direct
+       stripper: specifies the docid of  a  stripper  config  file  to  direct
        stripping of markup from files in this and in child directories.
 
-       sspplliitttteerr::  specifies  the  docid of the splitter config to use for this
+       splitter:  specifies  the  docid of the splitter config to use for this
        and all child directories.
 
-       ffiilltteerr:: designates the name of a Java filter program  to  be  used  for
+       filter: designates the name of a Java filter program  to  be  used  for
        filtering text files.
 
 
-OOtthheerr ccoonnffiigg kkeeyyss
+Other config keys
        At the topmost level a PDEF archive should contain a .conf file with at
        least
 
-       bbaassee__uurrll:: The url to upload to, e.g. http://localhost:8080/
+       base_url: The url to upload to, e.g. http://localhost:8080/
 
 
-EEXXAAMMPPLLEE
+EXAMPLE
        pdef‐tool archive
 
        pdef‐tool ‐a shakespeare ‐d "english/shakespeare/*"
