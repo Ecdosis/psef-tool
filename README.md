@@ -14,7 +14,7 @@ SYNOPSIS
        ‐f <formats> a comma‐separated list of TEXT,XML,MVD,MIXED (defaults to
        MVD)
 
-       ‐‐d <docid> the  prefix  of  a  docid  as  a  regular  expression,  e.g.
+       ‐d <docid> the  prefix  of  a  docid  as  a  regular  expression,  e.g.
        english/poetry.* (defaults to ".*")
 
        ‐n <name> the name of the archive to download (defaults to archive)
