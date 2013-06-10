@@ -5,9 +5,9 @@ NAME
 
 SYNOPSIS
 
-       Uploadin: pdef‐tool <source‐folder>
+       Uploading: pdef‐tool <source‐folder>
 
-       Downloadin:
+       Downloading:
 
        ‐h <host> the url for download (defaults to http://localhost:8080/)
 
