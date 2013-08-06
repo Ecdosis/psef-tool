@@ -125,6 +125,17 @@ specifies the docid of the splitter config to use for this and all child directo
 .B filter:
 designates the name of a Java filter program to be used for filtering text files.
 
+.SH Config keys recognised in TEXT and XML folders
+
+.B dict:
+the country code name of the aspell dictionary to use for upload, e.g. 'it' or 'en_GB'. The default behaviour of hyphens at line-end is to join the last word to the next word, by deleting the intervening line-feed and by flagging the hyphen as 'weak'. However, if the two words are both in the dictionary and the compound word (without a hyphen) is not, then the hyphen will be flagged as 'hard'.
+
+.B hh_exceptions:
+a white-space delimited list of compound words (no hyphens) that must be hyphenated according to the rules specified above for the 
+.B
+dict 
+keyword. e.g. adding the compound word 'underfoot' in a hh_exception list will cause the hyphen to be flagged as hard, i.e. 'under-foot'.
+
 .SH Other config keys
 At the topmost level a PDEF archive should contain a .conf file with at least 
 

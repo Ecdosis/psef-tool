@@ -61,7 +61,7 @@ static long write_time = 0;
  */
 static char line[MAXLINE];
 static char *json_keys[] = {"filter","stripper","splitter","corform",
-"style","author","section","version1","title","format"};
+"style","author","section","version1","title","format","dict","hh_exceptions"};
 /**
  * Write n bytes 
  * @param fd the descriptor to write to
