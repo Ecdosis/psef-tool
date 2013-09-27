@@ -24,7 +24,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" </runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h localhost</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/</runcommandpicklistitem>
@@ -34,8 +33,9 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d ".*"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -h http://austese.net/ -d ".*"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" images</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" archive/@config/splitter/default</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" images</runcommand>
+        <runcommand>"${OUTPUT_PATH}" archive/@config/splitter/default</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
