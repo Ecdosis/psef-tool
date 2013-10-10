@@ -25,6 +25,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <math.h>
+#include "moddate.h"
 #include "upload.h"
 #include "node.h"
 #include "response.h"
@@ -53,6 +54,7 @@ static long write_time = 0;
 #define TEXT_CORCODE_PATH "/import/text/corcode/"
 #define LITERAL_PATH "/import/literal/"
 #define XML_PATH "/import/xml/"
+#define HTML_PATH "/import/html/"
 #define MIXED_PATH "/import/mixed/"
 #define VERSION_KEY "VERSION_"
 #define PATH_SEPARATOR '/'
@@ -365,6 +367,9 @@ int get_full_url( item *it, config *cf, char *url, int limit )
             case XML:
                 res_path = XML_PATH;
                 break;
+            case HTML:
+                res_path = HTML_PATH;
+                break;
             case MIXED:
                 res_path = MIXED_PATH;
                 break;
@@ -412,8 +417,8 @@ static int upload_item_map( hashmap *hm )
                 path *p = item_paths( it );
                 while ( p != NULL )
                 {
-                    char name[64];
-                    path_name( p, name, 64 );
+                    char name[256];
+                    path_name( p, name, 256 );
                     res = mmp_add_file( m, name, path_get(p) );
                     p = path_next(p);
                 }
@@ -445,12 +450,12 @@ static int upload_item_map( hashmap *hm )
  * @param dir the directory to look for uploadables
  * @return 1 if it worked, else 0
  */
-int upload( char *dir )
+int upload( moddate *md, char *dir )
 {
     int res = 1;
     path *head, *tail;
     head = tail = NULL;
-    res = path_scan( dir, &head, &tail );
+    res = path_scan( md, dir, &head, &tail );
     if ( res )
     {
         hashmap *hm = path_process( head );

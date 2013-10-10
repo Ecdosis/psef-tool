@@ -11,6 +11,7 @@
 extern "C" {
 #endif
 int archive_scan();
+int upload( moddate *md, char *dir );
 
 #ifdef	__cplusplus
 }

@@ -9,6 +9,7 @@
 #define XML 5
 #define MIXED 6
 #define LITERAL 7
+#define HTML 8
 typedef struct item_struct item;
 item *item_create( char *docid, int type, char *db );
 void item_dispose( item *it );

@@ -8,8 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "moddate.h"
 #include "upload.h"
 #include "download.h"
+
 #ifdef MEMWATCH
 #include "memwatch.h"
 #endif
@@ -25,6 +27,8 @@ static char *zip_type = "TAR_GZ";
 static char *host = "http://localhost:8080/";
 /** the folder to upload */
 static char *folder = NULL;
+/** store last modification date for entire archive */
+static moddate *md = NULL;
 /** if set to 1 add required configs and corforms */
 int add_required = 0;
 /**
@@ -180,9 +184,22 @@ int main( int argc, char** argv )
     {
         int res = 1;
         if ( folder == NULL )
+        {
             res = download( host, formats, docid, name, zip_type, add_required );
+            if ( !res )
+                fprintf(stderr,"main: failed to download from %s\n",host);
+        }
         else
-            res = upload( folder );
+        {
+            md = moddate_create( folder );
+            if ( md == NULL )
+                fprintf(stderr,"moddate error: everything will be uploaded\n");
+            res = upload( md, folder );
+            if ( !res )
+                fprintf(stderr,"main: failed to upload %s\n",folder);
+            if ( md != NULL )// also writes modification date
+                moddate_dispose( md );
+        }
     }
     else
         usage();

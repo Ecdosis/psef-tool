@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include "hashmap.h"
+#include "moddate.h"
 #include "path.h"
 #include "config.h"
 #include "item.h"
@@ -119,12 +120,29 @@ static char *path_extend( char *p, char *ext, int dispose_old )
     return new_path;
 }
 /**
+ * Is this a .conf file?
+ * @param name the file name to test
+ * @return 1 if it is a .conf file else 0
+ */
+static int is_conf( char *name )
+{
+    int clen = strlen(name);
+    if ( clen > 5 )
+    {
+        if ( strcmp(&name[clen-5],".conf")==0 )
+            return 1;
+    }
+    return 0;
+}
+/**
  * Scan a directory for files. Don't do anything with them yet.
+ * @param md contains the date the archive was last uploaded
  * @param dir the directory to scan
  * @param head set to the head of a list of file-paths
  * @param tail set to the current path tail
+ * @return 1 if it worked
  */
-int path_scan( char *dir, path **head, path **tail )
+int path_scan( moddate *md, char *dir, path **head, path **tail )
 {
     int res = 1;
     DIR *dp;
@@ -134,14 +152,15 @@ int path_scan( char *dir, path **head, path **tail )
         struct dirent *ep = readdir(dp);
         while ( ep != NULL && res )
         {
-	        if ( strcmp(ep->d_name,"..")!=0 &&strcmp(ep->d_name,".")!=0 )
+	        if ( strcmp(ep->d_name,"..")!=0 &&strcmp(ep->d_name,".")!=0
+                &&strcmp(ep->d_name,MODDATE_FILE)!=0 )
             {
                 if ( is_directory(dir,ep->d_name) )
 	            {
                     char *new_path = path_extend( dir, ep->d_name, 0 );
                     if ( new_path != NULL )
                     {
-                        res = path_scan( new_path, head, tail );
+                        res = path_scan( md, new_path, head, tail );
                         free( new_path );
                     }
                     else
@@ -152,25 +171,29 @@ int path_scan( char *dir, path **head, path **tail )
                     char *new_path = path_extend( dir, ep->d_name, 0 );
                     if ( new_path != NULL )
                     {
-                        path *fp = calloc( 1, sizeof(path) );
-                        if ( fp != NULL )
+                        if ( md==NULL || is_conf(ep->d_name) 
+                            || moddate_is_later(md,new_path) )
                         {
-                            fp->path = strdup( new_path );
-                            if ( fp->path != NULL )
+                            path *fp = calloc( 1, sizeof(path) );
+                            if ( fp != NULL )
                             {
-                                if ( *head == NULL )
-                                    *head = *tail = fp;
-                                else
+                                fp->path = strdup( new_path );
+                                if ( fp->path != NULL )
                                 {
-                                    (*tail)->next = fp;
-                                    *tail = fp;
+                                    if ( *head == NULL )
+                                        *head = *tail = fp;
+                                    else
+                                    {
+                                        (*tail)->next = fp;
+                                        *tail = fp;
+                                    }
                                 }
+                                else
+                                    res = 0;
                             }
                             else
                                 res = 0;
                         }
-                        else
-                            res = 0;
                         free( new_path );
                     }
                     else
@@ -180,6 +203,8 @@ int path_scan( char *dir, path **head, path **tail )
             ep = readdir( dp ); 
         }
     }
+    else
+        res = 0;
     return res;
 }
 void path_append( path *fp, char *p )
@@ -288,9 +313,12 @@ static void path_parse( path *fp, hashmap *hm )
                         state = 6;
                     else if ( strcmp(token,"MIXED")==0 )
                         state = 7;
+                    else if ( strcmp(token,"HTML")==0 )
+                        state = 10;
                     else if ( !path_ends(token,".conf") )
                     {
-                        fprintf(stderr,"path:unexpected path %s/%s\n",
+                        fprintf(stderr,"path:expected format dir or "
+                            ".conf file but found %s/%s\n",
                             current,token);
                         state = -1;
                     }
@@ -302,7 +330,8 @@ static void path_parse( path *fp, hashmap *hm )
                         state = 8;
                     else if ( !path_ends(token,".conf") )
                     {
-                        fprintf(stderr,"path:unexpected path %s/%s\n",
+                        fprintf(stderr,"path:expected .conf file or "
+                            "cortex.mvd or corcode but found %s/%s\n",
                             current,token);
                         state = -1;
                     }
@@ -312,7 +341,7 @@ static void path_parse( path *fp, hashmap *hm )
                         state = 9;
                     else if ( strcmp(token,"cortex")==0 )
                     {
-                        state = 10;
+                        state = 11;
                         type = TEXT_CORTEX;
                     }
                     else if ( !path_ends(token,".conf") )
@@ -341,9 +370,15 @@ static void path_parse( path *fp, hashmap *hm )
                 case 9: // TEXT corcode
                     docid = path_extend( docid, token, 1 );
                     type = TEXT_CORCODE;
-                    state = 11;
+                    state = 12;
                     break;
-                case 10: case 11: // TEXT cortex,corcode
+                case 10: // HTML raw
+                    old = token;
+                    if ( is_directory(current,token) )
+                        versionID = path_extend( versionID, token, 1 );
+                    type = HTML;
+                    break;
+                case 11: case 12: // TEXT cortex,corcode
                     if ( versionID == NULL )
                     {
                         char *first=calloc(strlen(token)+2,1);

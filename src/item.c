@@ -3,6 +3,7 @@
 #include <string.h>
 #include "config.h"
 #include "hashmap.h"
+#include "moddate.h"
 #include "path.h"
 #include "item.h"
 #ifdef MEMWATCH
@@ -77,6 +78,9 @@ static char *item_type_str( item *it )
             break;
         case XML:
             return "XML";
+            break;
+        case HTML:
+            return "HTML";
             break;
         case MIXED:
             return "MIXED";
