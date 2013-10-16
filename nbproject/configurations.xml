@@ -12,6 +12,7 @@
       <itemPath>include/kv_array.h</itemPath>
       <itemPath>include/memwatch.h</itemPath>
       <itemPath>include/mmp.h</itemPath>
+      <itemPath>include/moddate.h</itemPath>
       <itemPath>include/node.h</itemPath>
       <itemPath>include/part.h</itemPath>
       <itemPath>include/path.h</itemPath>
@@ -37,6 +38,7 @@
       <itemPath>src/main.c</itemPath>
       <itemPath>src/memwatch.c</itemPath>
       <itemPath>src/mmp.c</itemPath>
+      <itemPath>src/moddate.c</itemPath>
       <itemPath>src/part.c</itemPath>
       <itemPath>src/path.c</itemPath>
       <itemPath>src/response.c</itemPath>
@@ -69,9 +71,6 @@
           <incDir>
             <pElem>include</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>MEMWATCH</Elem>
-          </preprocessorList>
         </cTool>
         <linkerTool>
           <linkerLibItems>
@@ -94,6 +93,8 @@
       <item path="include/memwatch.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/mmp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/moddate.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/node.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -128,6 +129,8 @@
       <item path="src/memwatch.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/mmp.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="src/moddate.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/part.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -179,6 +182,8 @@
       </item>
       <item path="include/mmp.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/moddate.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/node.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/part.h" ex="false" tool="3" flavor2="0">
@@ -212,6 +217,8 @@
       <item path="src/memwatch.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/mmp.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="src/moddate.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="src/part.c" ex="false" tool="0" flavor2="0">
       </item>

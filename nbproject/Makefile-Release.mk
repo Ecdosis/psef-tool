@@ -44,6 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/main.o \
 	${OBJECTDIR}/src/memwatch.o \
 	${OBJECTDIR}/src/mmp.o \
+	${OBJECTDIR}/src/moddate.o \
 	${OBJECTDIR}/src/part.o \
 	${OBJECTDIR}/src/path.o \
 	${OBJECTDIR}/src/response.o \
@@ -121,6 +122,11 @@ ${OBJECTDIR}/src/mmp.o: src/mmp.c
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/mmp.o src/mmp.c
+
+${OBJECTDIR}/src/moddate.o: src/moddate.c 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/moddate.o src/moddate.c
 
 ${OBJECTDIR}/src/part.o: src/part.c 
 	${MKDIR} -p ${OBJECTDIR}/src

@@ -78,6 +78,7 @@ int moddate_is_later( moddate *md, char *path )
     int res = stat(path, &buf);
     if ( !res )
     {
+        //printf("buf.st_mtime=%ld md->last_mode_date=%ld\n",buf.st_mtime,md->last_mod_date);
         if ( buf.st_mtime > md->last_mod_date )
             return 1;
     }
