@@ -122,9 +122,9 @@ static int check_args( int argc, char **argv )
                         if ( argc > i+1 )
                         {
                             if ( strcmp(argv[i+1],"tar_gz")==0 )
-                                zip_type = "tar_gz";
+                                zip_type = "TAR_GZ";
                             else if ( strcmp(argv[i+1],"zip")==0 )
-                                zip_type = "zip";
+                                zip_type = "ZIP";
                             else
                                 sane = 0;
                         }

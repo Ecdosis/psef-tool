@@ -282,7 +282,7 @@ int download( char *url, char **formats, char *docid, char *name,
                     else
                     {
                         char dst_name[128];
-                        char *suffix = (strcmp(zip_type,"zip")==0?"zip":"tar.gz");
+                        char *suffix = (strcmp(zip_type,"ZIP")==0?"zip":"tar.gz");
                         snprintf( dst_name, 128, "%s.%s", name, suffix );
                         FILE *dst = fopen( dst_name, "w" );
                         int nbytes = readn( sock, dst );
