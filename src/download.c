@@ -238,6 +238,7 @@ static void url_escape( char *str, int limit )
 int download( char *url, char **formats, char *docid, char *name, 
     char *zip_type, int add_required )
 {
+    int success = 0;
     int sock = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
     if ( sock >= 0 )
     {
@@ -285,8 +286,10 @@ int download( char *url, char **formats, char *docid, char *name,
                         snprintf( dst_name, 128, "%s.%s", name, suffix );
                         FILE *dst = fopen( dst_name, "w" );
                         int nbytes = readn( sock, dst );
-                        printf("nbytes=%d\n",nbytes);
+                        //printf("nbytes=%d\n",nbytes);
                         fclose( dst );
+                        if ( nbytes > 0 )
+                            success = 1;
                     }
                 }
             }
@@ -296,6 +299,7 @@ int download( char *url, char **formats, char *docid, char *name,
         else
             fprintf(stderr,"download: gethost failed\n");
     }
+    return success;
 }
 #ifdef TEST_DOWNLOAD
 int main( int argc, char **argv )
