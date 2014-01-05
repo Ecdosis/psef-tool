@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="88">
+<configurationDescriptor version="90">
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -24,7 +24,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" archive</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d english/shakespeare.*</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d .*</runcommandpicklistitem>
@@ -34,8 +33,9 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" archive/@config/splitter/default</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" _harpur</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" h2</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" config</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" h2</runcommand>
+        <runcommand>"${OUTPUT_PATH}" config</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

@@ -135,6 +135,44 @@ static int is_conf( char *name )
     return 0;
 }
 /**
+ * Don't accept link files not in HTML or XML folders
+ * @param path the path to check
+ * @return 1 if it was OK or we failed to copy the path
+ */
+static int is_allowed( char *path )
+{
+    // B: strtok will modify path, so copy it first
+    char *npath = strdup(path);
+    if ( npath != NULL )
+    {
+        char *last=NULL;
+        char *pent=NULL;
+        char *part = strtok(path,"/");
+        last = part;
+        while ( part != NULL )
+        {
+            part = strtok( NULL, "/");
+            if ( part != NULL )
+            {
+                pent = last;
+                last = part;
+            }
+        }
+        if ( last == NULL || pent == NULL || 
+            (strcmp(last,"link")==0 
+                && (strcmp(pent,"HTML")==0||strcmp(pent,"XML")==0)) )
+            return 1;
+        else
+            return 0;
+        free( npath );
+    }
+    else    // allow file if allocation fails
+    {
+        fprintf(stderr,"%s: %d failed to copy path\n",__FILE__,__LINE__);
+        return 1;
+    }
+}
+/**
  * Scan a directory for files. Don't do anything with them yet.
  * @param md contains the date the archive was last uploaded
  * @param dir the directory to scan
@@ -166,13 +204,14 @@ int path_scan( moddate *md, char *dir, path **head, path **tail )
                     else
                         res = 0;
 	            }
-                else
+                else    // it's a file
                 {
                     char *new_path = path_extend( dir, ep->d_name, 0 );
                     if ( new_path != NULL )
                     {
                         if ( md==NULL || is_conf(ep->d_name) 
-                            || moddate_is_later(md,new_path) )
+                            || (moddate_is_later(md,new_path)
+                                &&is_allowed(new_path)) )
                         {
                             path *fp = calloc( 1, sizeof(path) );
                             if ( fp != NULL )
