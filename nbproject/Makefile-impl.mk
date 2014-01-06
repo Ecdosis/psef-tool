@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=pdef-tool
+PROJECTNAME=psef-tool
 
 # Active Configuration
 DEFAULTCONF=Debug

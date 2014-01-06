@@ -162,7 +162,7 @@ static int check_args( int argc, char **argv )
 static void usage()
 {
     printf( 
-    "\npdef-tool [-h host] [-f formats] [-d docid] [-n name] "
+    "\npsef-tool [-h host] [-f formats] [-d docid] [-n name] "
     "[-z zip-type] [-r] [folder]\n\n"
     "Download parameters:\n"
     "  host: url for download (defaults to http://localhost:8080/)\n"
