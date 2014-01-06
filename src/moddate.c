@@ -13,7 +13,7 @@ struct moddate_struct
 
 /**
  * Create a moddate oject and initialise it
- * @param path the path to the contianing folder
+ * @param path the path to the containing folder
  * @return the object or NULL
  */
 moddate *moddate_create( char *path )
@@ -57,6 +57,14 @@ moddate *moddate_create( char *path )
  */
 void moddate_dispose( moddate *md )
 {
+    free( md );
+}
+/**
+ * Save the modification date to disk
+ * @param md the moddate object
+ */
+void moddate_save( moddate *md )
+{
     if ( md->file != NULL )
     {
         if ( md->last_mod_date == 0 )
@@ -64,7 +72,6 @@ void moddate_dispose( moddate *md )
         fprintf(md->file,"%ld",md->last_mod_date );
         fclose( md->file );
     }
-    free( md );
 }
 /**
  * Is a date later than our last moddate?

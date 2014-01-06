@@ -186,8 +186,14 @@ At the topmost level a PDEF archive should contain a .conf file with at least
 .B base_url:
 The url to upload to, e.g. http://localhost:8080/
 
-.SH EXAMPLE
-pdef-tool archive
+.SH Modification date
+
+pdef-tool creates a .moddate file inside the folder it is asked to 
+update. If all uploads were successful, this is set to the current 
+system time. Next time the folder is uploaded, only those files newer 
+than this time will be uploaded.
+
+.SH EXAMPLE pdef-tool archive
 
 pdef-tool -n shakespeare -r -d "english/shakespeare/*"
 

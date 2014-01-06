@@ -195,10 +195,14 @@ int main( int argc, char** argv )
             if ( md == NULL )
                 fprintf(stderr,"moddate error: everything will be uploaded\n");
             res = upload( md, folder );
-            if ( !res )
+            if ( res == UPLOADED_NONE )
                 fprintf(stderr,"main: failed to upload %s\n",folder);
-            if ( md != NULL )// also writes modification date
+            else if ( md != NULL )
+            {
+                if ( res == UPLOADED_ALL )
+                    moddate_save( md );
                 moddate_dispose( md );
+            }
         }
     }
     else

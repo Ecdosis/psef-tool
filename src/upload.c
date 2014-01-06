@@ -397,11 +397,12 @@ int get_full_url( item *it, config *cf, char *url, int limit )
 /**
  * Upload all the items in the item-map
  * @param hm the map
- * @return 1 if it worked
+ * @return UPLOADED_ALL if all worked, else if at least 1, 1, else 0
  */
 static int upload_item_map( hashmap *hm )
 {
-    int res = 1;
+    int some = 0;
+    int all = 1;
     int size = hashmap_size( hm );
     char **keys = calloc( size, sizeof(char*) );
     if ( keys != NULL )
@@ -435,20 +436,30 @@ static int upload_item_map( hashmap *hm )
                 }
             }
             mmp_dispose( m );
+            if ( !res )
+                all = 0;
+            else
+                some = 1;
         }
         free( keys );
     }
     else
     {
         fprintf(stderr,"upload: failed to extract hm keys\n");
-        res = 0;
+        some = all = 0;
     }
-    return res;
+    if ( all )
+        return UPLOADED_ALL;
+    else if ( some )
+        return UPLOADED_SOME;
+    else 
+        return UPLOADED_NONE;
 }
 /**
  * Scan a directory for uploadable items, then upload them.
+ * @param md a moddate object to store modification date
  * @param dir the directory to look for uploadables
- * @return 1 if it worked, else 0
+ * @return UPLOADED_SOME if some uploaded, if all UPLOADED_ALL, else 0
  */
 int upload( moddate *md, char *dir )
 {
@@ -460,7 +471,7 @@ int upload( moddate *md, char *dir )
     {
         hashmap *hm = path_process( head );
         path_find_config( head, hm );
-        upload_item_map( hm );
+        res = upload_item_map( hm );
         item_map_dispose( hm );
         path_dispose_all( head );
     }
