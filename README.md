@@ -4,7 +4,7 @@ psef-tool - uploads or downloads a portable scholarly edition
 
 SYNOPSIS
 ========
-Uploading: psef-tool <source-folder>
+**Uploading:** psef-tool <source-folder>
 
 Downloading:
 ------------
@@ -77,23 +77,23 @@ that  will  be  fetched instead of reading it locally. Links are always
 called "link" and their name is specified by their docID and versionID.
 The format of links is a simple JSON structure:
 
-title:  This is required, and should be a short name or version identi-
+**title:**  This is required, and should be a short name or version identi-
 fier.
 
-docid: This is also required, and is the docID of the resource.
+**docid:** This is also required, and is the docID of the resource.
 
-format: Must begin with LINK/. e.g. LINK/HTML for HTML or LINK/XML  for
+**format:** Must begin with LINK/. e.g. LINK/HTML for HTML or LINK/XML  for
 XML files, or LINK/DATA for pictures.
 
-url: The URL of the resource, minus any GET arguments.
+**url:** The URL of the resource, minus any GET arguments.
 
-args:  An  array of objects, with the keys name: and value: for the GET
+**args:**  An  array of objects, with the keys name: and value: for the GET
 parameters.  Optional.
 
-credentials: An object with the keys user: and password:. This is  only
+**credentials:** An object with the keys user: and password:. This is  only
 needed if the resource is protected by a username/password.
 
-fields:  Optional  array  of  field  names,  in  case  that the fetched
+**fields:**  Optional  array  of  field  names,  in  case  that the fetched
 resource is in JSON or BSON format. The named field's contents will  be
 concatenated  and returned as the output. Otherwise the entire resource
 will be returned.
@@ -112,18 +112,18 @@ tex.mvd  file the file cortex.conf would be a JSON file containing keys
 about the document. The following keys are recognised for  cortexs  and
 corcodes:
 
-author: The author's name
+**author:** The author's name
 
-title: The title of the work
+**title:** The title of the work
 
-style: the docid of the desired corform
+**style:** the docid of the desired corform
 
-format: One of "TEXT" (cortexs) or "STIL" (corcodes)
+**format:** One of "TEXT" (cortexs) or "STIL" (corcodes)
 
-section:  The  section  of the document this MVD refers to e.g. "Act 1,
+**section:**  The  section  of the document this MVD refers to e.g. "Act 1,
 scene 1"
 
-version1: The short ID of the first version to display by default, e.g.
+**version1:** The short ID of the first version to display by default, e.g.
 "/Base/F1". (Version IDs always start with a slash, docids do not)
 
 
@@ -155,29 +155,29 @@ case.   As  in HTML files, XML files may be replaced by links. However,
 extra config keys are recognised to facilitate import. In  addition  to
 the versions key, other recognised keys are:
 
-corform:  specifies  the docid of a corform file (a CSS file wrapped in
+**corform:**  specifies  the docid of a corform file (a CSS file wrapped in
 JSON) as the default format for files in this and child directories.
 
-stripper: specifies the docid of  a  stripper  config  file  to  direct
+**stripper:** specifies the docid of  a  stripper  config  file  to  direct
 stripping of markup from files in this and in child directories.
 
-splitter:  specifies  the  docid of the splitter config to use for this
+**splitter:**  specifies  the  docid of the splitter config to use for this
 and all child directories.
 
-filter: designates the name of a Java filter program  to  be  used  for
+**filter:** designates the name of a Java filter program  to  be  used  for
 filtering text files.
 
 
 Config keys recognised in TEXT and XML folders
 ----------------------------------------------
-dict: the country code name of the aspell dictionary to use for upload,
+**dict:** the country code name of the aspell dictionary to use for upload,
 e.g. 'it' or 'en_GB'. The default behaviour of hyphens at  line-end  is
 to  join  the  last  word to the next word, by deleting the intervening
 line-feed and by flagging the hyphen as 'weak'.  However,  if  the  two
 words  are  both  in  the  dictionary  and the compound word (without a
 hyphen) is not, then the hyphen will be flagged as 'hard'.
 
-hh_exceptions: a white-space  delimited  list  of  compound  words  (no
+**hh_exceptions:** a white-space  delimited  list  of  compound  words  (no
 hyphens) that must be hyphenated according to the rules specified above
 for the dict keyword. e.g. adding the compound word  'underfoot'  in  a
 hh_exception  list  will  cause  the hyphen to be flagged as hard, i.e.
@@ -189,7 +189,7 @@ Other config keys
 At the topmost level a PSEF archive should contain a .conf file with at
 least
 
-base_url: The url to upload to, e.g. http://localhost:8080/
+**base_url:** The url to upload to, e.g. http://localhost:8080/**
 
 
 Modification date
@@ -202,8 +202,8 @@ this time will be uploaded.
 
 EXAMPLE
 =======
-psef-tool archive
+`psef-tool archive`
 
-psef-tool -n shakespeare -r -d "english/shakespeare/*"
+`psef-tool -n shakespeare -r -d "english/shakespeare/*"`
 
 (the quotes are required to get around substitution by bash)
