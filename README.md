@@ -4,10 +4,14 @@ psef-tool - uploads or downloads a portable scholarly edition
 
 SYNOPSIS
 ========
-**Uploading:** psef-tool <source-folder>
+**Uploading:** 
 
-Downloading:
-------------
+`psef-tool <source-folder>`
+
+**Downloading:**
+
+`psef-tool`
+
 -h <host> the url for download (defaults to http://localhost:8080/)
 
 -f  <formats> a comma-separated list of TEXT,XML,MVD,MIXED (defaults to
