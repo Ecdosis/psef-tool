@@ -5,7 +5,7 @@
     <conf name="Debug" type="1">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <platform>4</platform>
+        <platform>2</platform>
       </toolsSet>
       <dbx_gdbdebugger version="1">
         <gdb_pathmaps>
@@ -24,7 +24,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" archive</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d english/shakespeare.*</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d .*</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d ".*"</runcommandpicklistitem>
@@ -34,8 +33,9 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" _harpur</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" h2</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" config</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" links</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" config</runcommand>
+        <runcommand>"${OUTPUT_PATH}" links</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
@@ -47,7 +47,7 @@
     <conf name="Release" type="1">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <platform>4</platform>
+        <platform>2</platform>
       </toolsSet>
       <dbx_gdbdebugger version="1">
         <gdb_pathmaps>

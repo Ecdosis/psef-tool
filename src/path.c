@@ -147,7 +147,7 @@ static int is_allowed( char *path )
     {
         char *last=NULL;
         char *pent=NULL;
-        char *part = strtok(path,"/");
+        char *part = strtok(npath,"/");
         last = part;
         while ( part != NULL )
         {
@@ -160,7 +160,8 @@ static int is_allowed( char *path )
         }
         if ( last == NULL || pent == NULL || 
             (strcmp(last,"link")==0 
-                && (strcmp(pent,"HTML")==0||strcmp(pent,"XML")==0)) )
+                && (strcmp(pent,"HTML")==0||strcmp(pent,"XML")==0))
+                || strcmp(last,"link")!=0 )
             return 1;
         else
             return 0;
