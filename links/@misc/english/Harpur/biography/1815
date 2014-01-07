@@ -1,0 +1,22 @@
+{
+    "title": "1815",
+    "docid": "english/harpur/biography/1815",
+    "format": "LINK/HTML",
+    "url": "http://austese.net/sites/all/modules/austese_repository/api/events/", 
+    "args": [ 
+        {
+            "name":"project",
+            "value": "21"
+        },
+        {
+            "name": "searchField",
+            "value": "name"
+        },
+        {
+            "name": "query",
+            "value": "1815"
+        }
+    ],
+    "credentials": { "user": "austese", "password": "austese9875!" },
+    "fields": [ "description", "references" ]
+}
