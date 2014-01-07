@@ -39,28 +39,31 @@ docids of the data on the server. Paths may be literal or relative.
 
 .SH CONFIG files
 
-Config files, ending in ".conf" are JSON files containing key-value pairs as 
-described below. A config file's values apply to the directory in which it occurs 
-and also to any subordinate folders.
+Config files, ending in ".conf" are JSON files containing key-value 
+pairs as described below. A config file's values apply to the directory 
+in which it occurs and also to any subordinate folders.
 
 .SH LITERAL PATHS 
 
-A folder name beginning with '@' designates a literal path. The foldername minus the '@' designates the database collection to which the contained files will be 
-uploaded. The remaining folders and files nested within a literal path folder form 
-the docids. e.g. a file in a folder structure:
+A folder name beginning with '@' designates a literal path. The 
+foldername minus the '@' designates the database collection to which the 
+contained files will be uploaded. The remaining folders and files nested 
+within a literal path folder form the docids. e.g. a file in a folder 
+structure:
 
 capuana/@config/stripper/play/italian/capuana.json
 
-will upload the file "capuana.json" to the database collection "config" with the 
-docid "stripper/play/italian/capuana.json". Literal paths are useful for specifying 
-images, configs and corforms.
+will upload the file "capuana.json" to the database collection "config" 
+with the docid "stripper/play/italian/capuana.json". Literal paths are 
+useful for specifying images, configs and corforms.
 
 .SH RELATIVE PATHS
 These begin with "+" and end with "%", so the directory path:
 
 archive/+english/shakespeare/kinglear/act1/%scene1/
 
-will upload its contents to the docid "english/shakespeare/kinglear/act1/scene1".
+will upload its contents to the docid 
+"english/shakespeare/kinglear/act1/scene1".
 
 Relative paths contain at least one subordinate folder called "MVD", "TEXT", "XML" 
 or "MIXED". Their formats are as follows:
@@ -75,9 +78,6 @@ format of links is a simple JSON structure:
 
 .B title: 
 This is required, and should be a short name or version identifier.
-
-.B docid:
-This is also required, and is the docID of the resource.
 
 .B format:
 Must begin with LINK/. e.g. LINK/HTML for HTML or LINK/XML for XML files, 
@@ -101,15 +101,17 @@ as the output. Otherwise the entire resource will be returned.
 
 .SH MVD folders
 
-An MVD folder contains one cortex.mvd file containing all the text versions at that 
-docid. It also must contain a folder "corcode" containing all the corcodes of that 
-cortex, for example the file "default" in the corcode sub-folder would be the 
-default corcode for that cortex.
+An MVD folder contains one cortex.mvd file containing all the text 
+versions at that docid. It also must contain a folder "corcode" 
+containing all the corcodes of that cortex, for example the file 
+"default" in the corcode sub-folder would be the default corcode for 
+that cortex.
 
-Other information about the corcode or cortex may be contained in a .conf file with 
-the same name as the cortex/corcode, e.g. for the cortex.mvd file the file 
-cortex.conf would be a JSON file containing keys about the document. The following 
-keys are recognised for cortexs and corcodes:
+Other information about the corcode or cortex may be contained in a 
+.conf file with the same name as the cortex/corcode, e.g. for the 
+cortex.mvd file the file cortex.conf would be a JSON file containing 
+keys about the document. The following keys are recognised for cortexs 
+and corcodes:
 
 .B author:
 The author's name

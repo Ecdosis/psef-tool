@@ -338,7 +338,7 @@ static int set_item_config( mmp *m, item *it )
  * @param limit space in url
  * @return 1 if it worked
  */
-int get_full_url( item *it, config *cf, char *url, int limit )
+int get_full_url (item *it, config *cf, char *url, int limit )
 {
     int res = 1;
     char *base_url = config_get( cf, "base_url" );
@@ -384,7 +384,14 @@ int get_full_url( item *it, config *cf, char *url, int limit )
             if ( ends_with(base_url,"/") )
                 res_path++;
             char *db = (kind==LITERAL)?item_db(it):"";
-            snprintf( url, limit, "%s%s%s",base_url, res_path, db );
+            int expected = strlen(base_url)+strlen(res_path)+strlen(db);
+            int found = snprintf( url, limit, "%s%s%s",base_url, res_path, db );
+            if ( found != expected )
+            {
+                res = 0;
+                fprintf(stderr,"%s:%d failed to construct URL\n",
+                    __FILE__,__LINE__);
+            }
         }
     }
     else
