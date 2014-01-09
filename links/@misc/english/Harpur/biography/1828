@@ -16,6 +16,9 @@
             "value": "1828"
         }
     ],
-    "credentials": { "user": "austese", "password": "austese9875!" },
-    "fields": [ "description", "references" ]
+    "login": { "type": "DRUPAL", "user": "harpur-dev", "password": "austese9875!" },
+    "fields": [ "results/description", "results/references" ],
+    "exclude": [ "project", "uri", "id", "updated" ],
+    "sortBy": "results/startDate",
+    "sortType": "date"
 }
