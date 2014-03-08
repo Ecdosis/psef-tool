@@ -30,12 +30,12 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" -h http://austese.net/ -d ".*"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" images</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" archive/@config/splitter/default</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" _harpur</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" h2</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" config</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" links</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" _harpur</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" links</runcommand>
+        <runcommand>"${OUTPUT_PATH}" _harpur</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

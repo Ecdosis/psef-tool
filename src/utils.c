@@ -504,6 +504,11 @@ int split_path( char **rel_path, char **name )
     }
     return res;
 }
+int is_link_format_dir( char *name )
+{
+    return strcmp(name,"HTML")==0||strcmp(name,"XML")==0
+        ||strcmp(name,"JSON")==0;
+}
 #ifdef UTILS_DEBUG
 int main( int argc, char **argv )
 {

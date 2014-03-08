@@ -8,6 +8,7 @@
 #include "path.h"
 #include "config.h"
 #include "item.h"
+#include "utils.h"
 #ifdef MEMWATCH
 #include "memwatch.h"
 #endif
@@ -77,28 +78,6 @@ path *path_next( path *p )
 {
     return p->next;
 }
-static int is_directory( char *relpath, char *dirname )
-{
-    if ( strcmp(dirname,"..")!=0&&strcmp(dirname,".")!=0 )
-    {
-        int len = strlen(relpath)+strlen(dirname)+1;
-        char *fullpath = malloc(len+1);
-        if ( fullpath != NULL )
-        {
-            snprintf(fullpath,len+1,"%s/%s",relpath,dirname);
-            DIR *dirp = opendir( fullpath );
-            if ( dirp != NULL )
-            {
-                closedir( dirp );
-                free( fullpath );
-                return 1;
-            }
-            else
-                free( fullpath );
-        }
-    }
-    return 0;
-}
 static char *path_extend( char *p, char *ext, int dispose_old )
 {
     int len = 0;
@@ -135,7 +114,7 @@ static int is_conf( char *name )
     return 0;
 }
 /**
- * Don't accept link files not in HTML or XML folders
+ * Don't accept link files not in HTML or XML or JSON folders
  * @param path the path to check
  * @return 1 if it was OK or we failed to copy the path
  */
@@ -160,7 +139,7 @@ static int is_allowed( char *path )
         }
         if ( last == NULL || pent == NULL || 
             (strcmp(last,"link")==0 
-                && (strcmp(pent,"HTML")==0||strcmp(pent,"XML")==0))
+                && is_link_format_dir(pent) )
                 || strcmp(last,"link")!=0 )
             return 1;
         else
@@ -287,6 +266,53 @@ static int path_ends( char *p, char *suf )
         return 0;
 }
 /**
+ * If the literal docid contains a format directory, remove it
+ * @param docid an allocate docid
+ */
+static char *fix_literal_docid( char *docid )
+{
+    char *rep = calloc( strlen(docid)+1, 1 );
+    if ( rep != NULL )
+    {
+        char *part = strtok( docid, "/" );
+        char *pent = NULL;
+        int seen_fmt_dir = 0;
+        while ( part != NULL )
+        {
+            if ( seen_fmt_dir )
+            {
+                if ( strcmp(part,"link")!=0 )
+                {
+                    strcat(rep,"/");
+                    strcat(rep,pent);
+                    strcat(rep,"/");
+                    strcat(rep,part);
+                }
+                break;
+            }
+            else if ( !is_link_format_dir(part) )
+            {
+                if ( strlen(rep)>0 )
+                    strcat(rep,"/");
+                strcat(rep,part);
+            }
+            else
+            {
+                seen_fmt_dir = 1;
+                pent = part;
+            }
+            part = strtok( NULL, "/" );
+        }
+        free( docid );
+    }
+    else
+    {
+        fprintf(stderr,"warning %s: line %d failed to allocate\n",__FILE__,__LINE__);
+        rep = docid;
+    }
+    return rep;
+}
+/**
  * Parse the path for items
  * @param fp the path object
  * @param hm the hashmap to store items in
@@ -343,6 +369,8 @@ static void path_parse( path *fp, hashmap *hm )
                     break;
                 case 2: // literal path
                     docid = path_extend( docid, token, 1 );
+                    if ( !is_directory(current,token) )
+                        docid = fix_literal_docid(docid);
                     break;
                 case 3: // decide item type
                     if ( strcmp(token,"MVD")==0 )

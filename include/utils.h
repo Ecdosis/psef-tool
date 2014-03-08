@@ -30,6 +30,7 @@ int is_uploadable( char *name );
 int count_chars( char *str, char token );
 long epoch_time();
 int split_path( char **rel_path, char **name );
+int is_link_format_dir( char *name );
 
 #ifdef	__cplusplus
 }

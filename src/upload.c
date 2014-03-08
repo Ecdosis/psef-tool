@@ -137,8 +137,13 @@ static int readn( int sock )
             else if ( n == 0 )
             {
                 // just finished reading
-                res = response_ok( r );
-                response_dump( r );
+                if ( response_get_len(r)> 0 )
+                {
+                    res = response_ok( r );
+                        response_dump( r );
+                }
+                else
+                    res = 1;
                 break;
             }
             else
