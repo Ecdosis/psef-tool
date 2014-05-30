@@ -444,7 +444,10 @@ static int upload_item_map( hashmap *hm )
                     char full_url[128];
                     res = get_full_url( it, item_config(it), full_url, 128 );
                     if ( res )
+                    {
+                        fprintf(stderr,"uploading %s\n",item_docid(it));
                         res = upload_to_url(m, full_url);
+                    }
                 }
             }
             mmp_dispose( m );

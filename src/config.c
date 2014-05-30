@@ -279,17 +279,22 @@ config *config_update( char *path, config *parent )
                         cJSON_Delete( root );
                     }
                     else
-                        fprintf(stderr,"archive: failed to parse JSON\n");
+                        fprintf(stderr,
+                            "config: failed to parse JSON. path=%s\n",path);
                 }
                 else
-                    fprintf(stderr,"archive: failed to load config\n");
+                    fprintf(stderr,"config: failed to load config\n");
                 free( mdata );
             }
             else
-                fprintf(stderr,"archive: failed to allocate file buffer\n");
+                fprintf(stderr,"config: failed to allocate file buffer\n");
         }
         else
-            fprintf(stderr,"archive: failed to read %s\n",path);
+        { 
+            if ( path==NULL )
+                path ="";
+            fprintf(stderr,"config: failed to read %s\n",path);
+        }
         fclose( fp );
     }
     else

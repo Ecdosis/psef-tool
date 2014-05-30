@@ -64,12 +64,14 @@ int response_append( response *r, char *line, int n )
 {
     if ( r->pos+n+1 > r->allocated )
     {
-        int new_allocated = r->allocated + MAX(BLOCK_SIZE,n);
+        int new_allocated = r->allocated;
+        new_allocated += (n>BLOCK_SIZE)?n:BLOCK_SIZE;
         char *new_buffer = malloc( new_allocated );
         if ( new_buffer != NULL )
         {
             memcpy( new_buffer, r->buffer, r->pos );
             free( r->buffer );
+            r->buffer = new_buffer;
             r->allocated = new_allocated;
         }
         else

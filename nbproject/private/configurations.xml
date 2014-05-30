@@ -24,7 +24,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d english/shakespeare.*</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d .*</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -f MVD -h http://localhost:8080/ -d ".*"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -h http://austese.net/ -d ".*"</runcommandpicklistitem>
@@ -34,8 +33,9 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" config</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" links</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" _harpur</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" browse</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" _harpur</runcommand>
+        <runcommand>"${OUTPUT_PATH}" browse</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

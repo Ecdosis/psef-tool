@@ -58,17 +58,21 @@ path *path_dispose_all( path *h )
 void path_name( path *p, char *name, int limit )
 {
     char *dup = strdup( p->path );
-    char *token = strtok( dup, "/" );
-    char *last = token;
-    while ( token != NULL )
+    if ( dup != NULL )
     {
-        last = token;
-        token = strtok( NULL, "/" );
+        char *token = strtok( dup, "/" );
+        char *last = token;
+        while ( token != NULL )
+        {
+            last = token;
+            token = strtok( NULL, "/" );
+        }
+        if ( last != NULL )
+            strncpy( name, last, limit );
+        else
+            strncpy( name, p->path, limit );
+        free( dup );
     }
-    if ( last != NULL )
-        strncpy( name, last, limit );
-    else
-        strncpy( name, p->path, limit );
 }
 char *path_get( path *p )
 {
@@ -95,6 +99,8 @@ static char *path_extend( char *p, char *ext, int dispose_old )
                 free( p );
         }
         strcat( new_path, ext );
+        if ( strlen(new_path)>60)
+            printf(">60!\n");
     }
     return new_path;
 }
@@ -197,6 +203,8 @@ int path_scan( moddate *md, char *dir, path **head, path **tail )
                             if ( fp != NULL )
                             {
                                 fp->path = strdup( new_path );
+                                if ( strlen(fp->path)>75 )
+                                    printf(">75!\n");
                                 if ( fp->path != NULL )
                                 {
                                     if ( *head == NULL )
@@ -234,6 +242,8 @@ void path_append( path *fp, char *p )
     temp->next = calloc( 1, sizeof(path) );
     temp = temp->next;
     temp->path = strdup(p);
+    if ( strlen(temp->path)>75 )
+        printf(">75!\n");
 }
 static void print_paths( path *head )
 {
@@ -265,19 +275,33 @@ static int path_ends( char *p, char *suf )
     else
         return 0;
 }
+static char *strtoken( char **str, const char *delim )
+{
+    char *token = *str;
+    char *pos = strstr( *str, delim );
+    if ( pos != NULL )
+    {
+        *pos = 0;
+        *str = pos+1;
+    }
+    else
+        *str += strlen( *str );
+    return token;
+}
 /**
  * If the literal docid contains a format directory, remove it
  * @param docid an allocate docid
  */
 static char *fix_literal_docid( char *docid )
 {
-    char *rep = calloc( strlen(docid)+1, 1 );
+    char *ptr = docid;
+    char *rep = calloc( strlen(ptr)+1, 1 );
     if ( rep != NULL )
     {
-        char *part = strtok( docid, "/" );
+        char *part = strtoken( &ptr, "/" );
         char *pent = NULL;
         int seen_fmt_dir = 0;
-        while ( part != NULL )
+        while ( strlen(part) > 0 )
         {
             if ( seen_fmt_dir )
             {
@@ -301,14 +325,14 @@ static char *fix_literal_docid( char *docid )
                 seen_fmt_dir = 1;
                 pent = part;
             }
-            part = strtok( NULL, "/" );
+            part = strtoken( &ptr, "/" );
         }
         free( docid );
     }
     else
     {
         fprintf(stderr,"warning %s: line %d failed to allocate\n",__FILE__,__LINE__);
-        rep = docid;
+        rep = ptr;
     }
     return rep;
 }
