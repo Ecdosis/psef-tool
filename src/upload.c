@@ -436,7 +436,7 @@ static int upload_item_map( hashmap *hm )
                     p = path_next(p);
                 }
                 if ( res )
-                    res = mmp_add_field( m, "DOC_ID", item_docid(it) );
+                    res = mmp_add_field( m, "docid", item_docid(it) );
                 if ( res )
                     res = set_item_config( m, it );
                 if ( res )

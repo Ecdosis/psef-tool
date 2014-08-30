@@ -266,7 +266,7 @@ int download( char *url, char **formats, char *docid, char *name,
                     print_formats( formats, forms, 128 );
                     // add params
                     snprintf(params,128,
-                        "DOC_ID=%s&add_required=%s&NAME=%s&zip_type=%s&%s",
+                        "docid=%s&add_required=%s&NAME=%s&zip_type=%s&%s",
                         docid,add_reqd_str,name,zip_type,forms);
                     url_escape( params, 128 );
                     if ( port != 80 )
