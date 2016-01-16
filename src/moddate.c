@@ -74,6 +74,24 @@ void moddate_save( moddate *md )
     }
 }
 /**
+ * Save the modification date to disk
+ * @param md the moddate object
+ * @return 1 if it worked
+ */
+int moddate_remove( char *folder )
+{
+    int len = strlen(folder)+2+strlen(MODDATE_FILE);
+    char *temp = malloc(len);
+    if ( temp != NULL )
+    {
+        snprintf(temp,len,"%s/%s",folder,MODDATE_FILE);
+        int res = remove(temp);
+        free( temp);
+        return res==0;
+    }
+    return 0;
+}
+/**
  * Is a date later than our last moddate?
  * @param md the object to test against
  * @param path the file to compare with

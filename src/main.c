@@ -31,6 +31,8 @@ static char *folder = NULL;
 static moddate *md = NULL;
 /** if set to 1 add required configs and corforms */
 int add_required = 0;
+/** if set remove .moddate file */
+int remove_moddate = 0;
 /**
  * Read the comma-separated list of formats
  * @param fmts a list of TEXT,MVD,XML,MIXED
@@ -132,6 +134,9 @@ static int check_args( int argc, char **argv )
                     case 'r':
                         add_required = 1;
                         break;
+                    case 'R':
+                        remove_moddate = 1;
+                        break;
                     default:
                         sane = 0;
                         break;
@@ -170,8 +175,9 @@ static void usage()
     "  docid: wildcard prefix docid, e.g. english/poetry.* (defaults to \".*\")\n"
     "  name: name of archive to download (defaults to archive)\n"
     "  zip-type: type of zip archive, either tar_gz or zip (defaults to tar_gz)\n"
-    "  -r: download required corforms and all configs on server\n\n"
-    "Upload parameter:\n"
+    "  -r: download required corforms and all configs on server\n"
+    "  -R: reset archive for uploading again\n\n"
+    "  Upload parameter:\n"
     "  folder: relative path to folder for uploading\n\n"
     );
 }
@@ -191,6 +197,10 @@ int main( int argc, char** argv )
         }
         else
         {
+            if ( remove_moddate )
+                res = moddate_remove(folder);
+            if ( !res )
+                fprintf(stderr,"moddate: failed to remove file\n");
             md = moddate_create( folder );
             if ( md == NULL )
                 fprintf(stderr,"moddate error: everything will be uploaded\n");

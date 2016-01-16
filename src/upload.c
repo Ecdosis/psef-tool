@@ -48,14 +48,14 @@ static long write_time = 0;
 
 #define SOCK_TIMEOUT 0.2f
 #define MAXLINE 4096
-#define MVD_CORTEX_PATH "/import/literal/cortex/"
-#define MVD_CORCODE_PATH "/import/literal/corcode/"
-#define TEXT_CORTEX_PATH "/import/text/cortex/"
-#define TEXT_CORCODE_PATH "/import/text/corcode/"
-#define LITERAL_PATH "/import/literal/"
-#define XML_PATH "/import/xml/"
-#define HTML_PATH "/import/html/"
-#define MIXED_PATH "/import/mixed/"
+#define MVD_CORTEX_PATH "/importer/literal/cortex/"
+#define MVD_CORCODE_PATH "/importer/literal/corcode/"
+#define TEXT_CORTEX_PATH "/importer/text/cortex/"
+#define TEXT_CORCODE_PATH "/importer/text/corcode/"
+#define LITERAL_PATH "/importer/literal/"
+#define XML_PATH "/importer/xml/"
+#define HTML_PATH "/importer/html/"
+#define MIXED_PATH "/importer/mixed/"
 #define VERSION_KEY "VERSION_"
 #define PATH_SEPARATOR '/'
 /*

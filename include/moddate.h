@@ -17,6 +17,7 @@ typedef struct moddate_struct moddate;
 moddate *moddate_create( char *path );
 void moddate_dispose( moddate *md );
 void moddate_save( moddate *md );
+int moddate_remove( char *folder );
 int moddate_is_later( moddate *md, char *path );
 
 
